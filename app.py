@@ -104,47 +104,70 @@ class Actor_info(movie_db.Model):
 #     mv_awards = TextAreaField('Movie_awards') #电影获得的奖项
 #     movie_search_submit = SubmitField('Search_movie')
 
-@app.route('/')
-def index():
-    return render_template('mainpage_base.html')
-
-@app.route('/search', methods = ['GET', 'POST']) #搜索装饰器
+@app.route('/', methods = ['GET', 'POST'])
 def search():
-    #form = Movie_form()
-    if request.method == 'POST':
-        #传入前端表单用户输入的数据
-        mv_id = request.form.get('mv_id') 
-        mv_name = request.form.get('mv_name') 
-        date = datetime.strptime(request.form.get('date'), "%Y-%m-%d")
-        mv_country = request.form.get('mv_country')
-        mv_type = request.form.get('mv_type')
-        box_1 = request.form.get('box_1')
-        box_2 = request.form.get('box_2')
+    if request.method == 'POST': #关键，如果表单提交了再渲染搜索结果的界面！！
+        if 'search_mv' in request.form: #一个页面有多份表单时，根据提交的表单进行跳转
+            #传入前端表单用户输入的数据
+            mv_id = request.form.get('mv_id') 
+            mv_name = request.form.get('mv_name') 
+            date = request.form.get('date')
+            if date:
+                date = datetime.strptime(date, "%Y-%m-%d") #时间非空，再进行转化
+            mv_country = request.form.get('mv_country')
+            mv_type = request.form.get('mv_type')
+            box_1 = request.form.get('box_1')
+            box_2 = request.form.get('box_2')
 
-        #构建查询，逐步筛选
-        temp_query = Movie_info.query
-        if mv_id:
-            temp_query = temp_query.filter(Movie_info.mv_id == mv_id)
-        if mv_name:
-            temp_query = temp_query.filter(Movie_info.mv_name.ilike(f'%{mv_name}%'))
-        if date:
-            temp_query = temp_query.filter(Movie_info.rls_date == date)
-        if mv_country:
-            temp_query = temp_query.filter(Movie_info.mv_country.ilike(f'%{mv_country}%'))
-        if mv_type:
-            temp_query = temp_query.filter(Movie_info.mv_type.ilike(f'%{mv_type}%'))
-        if box_1 == '选出大于该票房的':
-            temp_query = temp_query.filter(Movie_info.mv_box > box_2)
-        elif box_1 == '选出小于等于该票房的':
-            temp_query = temp_query.filter(Movie_info.mv_box <= box_2)
-        else:
-            pass
+            #构建查询，逐步筛选
+            temp_query = Movie_info.query
+            if mv_id:
+                temp_query = temp_query.filter(Movie_info.mv_id == mv_id)
+            if mv_name:
+                temp_query = temp_query.filter(Movie_info.mv_name.ilike(f'%{mv_name}%'))
+            if date:
+                temp_query = temp_query.filter(Movie_info.rls_date == date)
+            if mv_country:
+                temp_query = temp_query.filter(Movie_info.mv_country.ilike(f'%{mv_country}%'))
+            if mv_type:
+                temp_query = temp_query.filter(Movie_info.mv_type.ilike(f'%{mv_type}%'))
+            if box_1 == '选出大于该票房的':
+                temp_query = temp_query.filter(Movie_info.mv_box > box_2)
+            elif box_1 == '选出小于等于该票房的':
+                temp_query = temp_query.filter(Movie_info.mv_box <= box_2)
+            else:
+                pass
+            search_rst = temp_query.all()
+            return render_template('search_mv.html', rst_movies = search_rst)
         
-        search_rst = temp_query.all()
+        elif 'search_act' in request.form:
+            act_id = request.form.get('act_id')
+            act_name = request.form.get('act_name')
+            gender = request.form.get('gender')
+            act_country = request.form.get('act_country')
 
-        return render_template('mainpage_search.html', rst_movies = search_rst)
-    else:
-        return render_template('mainpage_search.html', rst_movies = '无查询结果')
+            temp_query = Movie_info.query
+            if act_id:
+                temp_query = temp_query.filter(Actor_info.act_id == act_id)
+            if act_name:
+                temp_query = temp_query.filter(Actor_info.act_name.ilike(f'%{act_name}%'))
+            if gender:
+                temp_query = temp_query.filter(Actor_info.gender == gender)
+            if act_country:
+                temp_query = temp_query.filter(Actor_info.act_country.ilike(f'%{act_country}%'))
+            search_rst = temp_query.all()
+            return render_template('search_act.html', rst_actors = search_rst)
+        
+        else:
+            return redirect(url_for('/')) #收到不知名表单，则跳转回主页
+        
+    else: #若未填写表单并发出搜索请求，则直接显示电影展示界面
+        return render_template('mainpage_base.html')
+
+#@app.route('/search', methods = ['GET', 'POST']) #搜索装饰器
+
+
+
     
 #@app.route('/userpage/<string: username>', methods = ['GET', 'POST'])
 #def import_data()
