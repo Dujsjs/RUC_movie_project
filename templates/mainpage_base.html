@@ -1,0 +1,180 @@
+<!doctype html> <!--html5 声明-->
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>电影管理系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.3/css/normalize.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.3/css/foundation.min.css">
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/foundicons/3.0.0/foundation-icons.css' rel='stylesheet' type='text/css'>
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/foundation/5.5.3/js/foundation.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+  </head>
+
+  <body>
+    <!--顶部导航栏-->
+    <nav class="top-bar" data-topbar>
+
+      <ul class="title-area">
+        <li class="name">
+          <h1>
+            <a href="#">
+              电影管理系统
+            </a>
+          </h1>
+        </li>
+        <li class="toggle-topbar menu-icon"><a href="#"><span>menu</span></a></li>
+      </ul>
+
+      <section class="top-bar-section">
+
+        <ul class="left">
+          <li class="divider"></li> <!--纵向分隔线-->
+          <li><a href="#">Main Item 1</a></li>
+          <li class="divider"></li><!--纵向分隔线-->
+          <li><a href="#">Main Item 2</a></li>
+          <li class="divider"></li><!--纵向分隔线-->
+        </ul>
+
+        <!--弹出式搜索栏-->
+        <ul class="right">
+          <button type="button" class="button" data-reveal-id="search"><i class="fi-magnifying-glass"></i> 搜索</button>
+          <div id="search" class="reveal-modal" data-reveal>
+            <br>
+            <form method="post">
+              <ul class="tabs" data-tab>
+                <li class="tab-title active"><a href="#search_movie">搜索电影</a></li>
+                <li class="tab-title"><a href="#search_actor">搜索演员</a></li>
+              </ul>
+
+              <div class="tabs-content">
+                <div class="content active" id="search_movie">
+                  <fieldset>
+                    <legend>请输入待查找电影[至少一方面]的信息</legend>
+                    请输入电影ID
+                    <input type="text" name = "mv_id"> <!--若加入required，则表示数据是必须输入的-->
+                    请输入电影名称
+                    <input type="text" name = "mv_name">
+                    请按xxxx-xx-xx格式输入日期
+                    <input type="text" name = "date">
+                    请选择电影对应的国家
+                    <select name = "mv_country">
+                      <option></option>
+                      <option>中国</option>
+                      <option>法国</option>
+                      <option>日本</option>
+                      <option>澳大利亚</option>
+                      <option>英国</option>
+                      <option>埃及</option>
+                      <option>加拿大</option>
+                      <option>韩国</option>
+                      <option>美国</option>
+                      <option>墨西哥</option>
+                      <option>巴西</option>
+                      <option>巴拿马</option>
+                      <option>波兰</option>
+                      <option>芬兰</option>
+                      <option>瑞典</option>
+                      <option>挪威</option>
+                      <option>菲律宾</option>
+                      <option>越南</option>
+                      <option>老挝</option>
+                      <option>印度</option>
+                      <option>巴基斯坦</option>
+                    </select>
+                    请选择电影的类型
+                    <select name = "mv_type">
+                      <option></option>
+                      <option>动作</option>
+                      <option>爱情</option>
+                      <option>喜剧</option>
+                      <option>战争</option>
+                      <option>恐怖</option>
+                      <option>文艺</option>
+                      <option>科幻</option>
+                      <option>伦理</option>
+                      <option>冒险</option>
+                      <option>剧情</option>
+                      <option>惊悚</option>
+                      <option>家庭</option>
+                      <option>运动</option>
+                      <option>奇幻</option>
+                      <option>历史</option>
+                      <option>悬疑</option>
+                      <option>歌舞</option>
+                      <option>纪录</option>
+                      <option>犯罪</option>
+                      <option>西部</option>                      
+                    </select>
+                    请输入票房及筛选条件：
+                    <select name = "box_1">
+                      <option></option>
+                      <option>选出大于该票房的</option>
+                      <option>选出小于等于该票房的</option>
+                    </select>
+                    <input type="text" name = "box_2">
+                    <input class="button" type = "submit" name = "submit" value="搜索">
+                  </fieldset>
+                </div>
+
+                <div class="content" id="search_actor">
+                  <fieldset>
+                    <legend>请输入待查找演员[至少一方面]的信息</legend>
+                    <input type="text" name = "mv_name" placeholder="请输入电影名称" required> <!--required表示数据是必须输入的-->
+                    <input class="button" type = "submit" name = "submit" value="搜索">
+                  </fieldset>
+                </div>
+              </div>
+            </form>
+            <a class="close-reveal-modal">&times;</a>
+          </div>
+
+          <button type="button" class="button" data-reveal-id="login"><i class="fi-magnifying-glass"></i> 登录/注册</button>
+          <div id="login" class="reveal-modal" data-reveal>
+            <br>
+            <form method="post">
+              <div data-alert class="alert-box warning">
+                <strong>请注意！</strong> 如果您之前未注册过账号，系统将为您自动注册。
+                <a href="#" class="close">&times;</a>
+              </div>
+              <input type="text" name = "user_name" placeholder="请输入用户名" required> <!--required表示数据是必须输入的-->
+              <input class="button" type = "submit" name = "log_in" value="登录/注册">
+            </form>
+            <a class="close-reveal-modal">&times;</a>
+          </div>
+        </ul>
+
+      </section>
+    </nav>
+    <!--顶部导航栏结束-->
+
+    {% block 图片展示 %}
+    <!--电影海报滚动展示-->
+    <div style="padding:20px">
+      <h4>每日电影推荐</h4>
+      <ul class="clearing-thumbs" data-clearing>
+        <li><a href="rock600x400.jpg" class="th"><img data-caption="The Pulpit Rock" src="rock200x100.jpg" width="200" height="100"></a></li>
+        <li><a href="skies600x400.jpg" class="th"><img data-caption="Sunrise Skies" src="skies200x100.jpg" width="200" height="100"></a></li>
+        <li><a href="lights600x400.jpg" class="th"><img data-caption="Northern Lights" src="lights200x100.jpg" width="200" height="100"></a></li>
+      </ul>
+    </div>
+    <!--电影海报滚动展示结束-->
+    {% endblock 图片展示 %}
+
+    {% block 搜索结果 %}{% endblock 搜索结果 %}
+
+    {% block 登录者电影录入 %}{% endblock 登录者电影录入 %} <!--此处插入登陆后的修改、录入界面-->
+
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.3/js/foundation.min.js"></script>
+    <script>
+      $(document).foundation();
+    </script>
+
+  </body>
+  <!--主体部分结束-->
+
+</html>
+
