@@ -1,0 +1,243 @@
+{% extends 'mainpage_base.html' %}
+
+{% block 图片展示 %} <!--这里将图片展示区用作展示所有电影库内的电影，并适当进行分页操作-->
+
+{% endblock 图片展示 %}
+
+
+{% block 登录者电影录入 %} <!--这里插入一个表单，进行详细的信息录入工作-->
+<div id="formContainer">
+    <!-- 初始化的表单 -->
+    <div class="form-group">
+        <form class="act_Form">
+            <div class="row" id="formItems1">
+                <br>
+                <div class="small-12 columns form-item">
+                    请输入电影ID
+                    <input type="text" name = "mv_id"> <!--这里加一个功能：如果用户不指定，就自动分配；如果用户指定，就判断是否合法-->
+                    请输入电影名称
+                    <input type="text" name = "mv_name">
+                    请按xxxx-xx-xx格式输入日期
+                    <input type="text" name = "date">
+                    请选择电影对应的国家
+                    <select name = "mv_country">
+                        <option></option>
+                        <option>中国</option>
+                        <option>法国</option>
+                        <option>日本</option>
+                        <option>澳大利亚</option>
+                        <option>英国</option>
+                        <option>埃及</option>
+                        <option>加拿大</option>
+                        <option>韩国</option>
+                        <option>美国</option>
+                        <option>墨西哥</option>
+                        <option>巴西</option>
+                        <option>巴拿马</option>
+                        <option>波兰</option>
+                        <option>芬兰</option>
+                        <option>瑞典</option>
+                        <option>挪威</option>
+                        <option>菲律宾</option>
+                        <option>越南</option>
+                        <option>老挝</option>
+                        <option>印度</option>
+                        <option>巴基斯坦</option>
+                    </select>
+                    请选择电影的类型
+                    <select name = "mv_type">
+                        <option></option>
+                        <option>动作</option>
+                        <option>爱情</option>
+                        <option>喜剧</option>
+                        <option>战争</option>
+                        <option>恐怖</option>
+                        <option>文艺</option>
+                        <option>科幻</option>
+                        <option>伦理</option>
+                        <option>冒险</option>
+                        <option>剧情</option>
+                        <option>惊悚</option>
+                        <option>家庭</option>
+                        <option>运动</option>
+                        <option>奇幻</option>
+                        <option>历史</option>
+                        <option>悬疑</option>
+                        <option>歌舞</option>
+                        <option>纪录</option>
+                        <option>犯罪</option>
+                        <option>西部</option>                      
+                    </select>
+                    请输入票房
+                    <input type="text" name = "box_2">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="formContainer">
+    <!-- 初始化的表单 -->
+    <div class="form-group">
+        <form class="act_Form">
+            <div class="row" id="formItems1">
+                <div class="small-12 columns form-item">
+                    <hr>
+                    请输入演员ID
+                    <input type="text" name = "act_id">
+                    请输入演员姓名
+                    <input type="text" name = "act_name">
+                    请选择演员性别
+                    <select name = "gender">
+                        <option></option>
+                        <option>男</option>
+                        <option>女</option>
+                    </select>
+                    请输入演员国籍
+                    <input type="text" name = "country">
+                    请选择演员身份
+                    <select name = "act_relation">
+                        <option>主演</option>
+                        <option>导演</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    <div class="small-12 columns">
+        <button type="button" onclick="addForm()">增加演员</button>
+        <button type="button" onclick="deleteForm()">删除演员</button>
+    </div>
+</div>
+    
+    
+    <input class="button" type = "submit" name = "add_info" value="确认添加">  <!--在提交按钮处采用不同的name，对表单加以区分-->
+</form>
+
+<script>
+    var formCount = 1;
+
+    function addForm() 
+    {
+        formCount++;
+        var formContainer = document.getElementById('formContainer');
+
+        var actFormGroup = document.createElement('div');
+        actFormGroup.className = 'form-group';
+
+        var actForm = document.createElement('form');
+        actForm.className = 'act_Form';
+
+        var actFormItems = document.createElement('div');
+        actFormItems.className = 'row';
+        actFormItems.id = 'actor_Form_Con ' + formCount;
+
+        var actItem = document.createElement('div');
+        actItem.className = 'small-12 columns form-item';
+
+        var actLegend = document.createElement('legend');
+        actLegend.textContent = '演员 ' + formCount;
+
+        var backspace = document.createElement('br'); //回车符
+
+        var line = document.createElement('hr'); //增加分割线
+        actItem.appendChild(line)
+
+        var idLabel = document.createElement('label');
+        idLabel.setAttribute('for', 'actorID');
+        idLabel.textContent = '请输入演员ID '
+        var idInput = document.createElement('input');
+        idInput.setAttribute('type', 'text');
+        idInput.setAttribute('id', 'actorID');
+        idInput.setAttribute('name', 'actorID');
+        actItem.appendChild(idLabel);   //将标签和输入框添加到表单项元素中
+        actItem.appendChild(idInput);
+        actItem.appendChild(backspace);
+
+        var nameLabel = document.createElement('label');
+        nameLabel.setAttribute('for', 'actorName');
+        nameLabel.textContent = '请输入演员姓名 '
+        var nameInput = document.createElement('input');
+        nameInput.setAttribute('type', 'text');
+        nameInput.setAttribute('id', 'actorName');
+        nameInput.setAttribute('name', 'actorName');
+        actItem.appendChild(nameLabel);   //将标签和输入框添加到表单项元素中
+        actItem.appendChild(nameInput);
+        actItem.appendChild(backspace);
+
+        var gender = document.createElement('label');
+        gender.setAttribute('for', 'gender');
+        gender.textContent = '请选择演员性别 '
+        var genderSelect = document.createElement('select');
+        genderSelect.setAttribute('id', 'select1');
+        genderSelect.setAttribute('name', 'select1');
+        var gender1 = document.createElement('option');
+        gender1.setAttribute('value', 'gender1');
+        gender1.textContent = '';
+        var gender2 = document.createElement('option');
+        gender2.setAttribute('value', 'gender2');
+        gender2.textContent = '男';
+        var gender3 = document.createElement('option');
+        gender3.setAttribute('value', 'gender3');
+        gender3.textContent = '女';
+        genderSelect.appendChild(gender1);
+        genderSelect.appendChild(gender2);
+        genderSelect.appendChild(gender3);
+        actItem.appendChild(gender)
+        actItem.appendChild(genderSelect);
+        actItem.appendChild(backspace);
+
+        var country = document.createElement('label');
+        country.setAttribute('for', 'country');
+        country.textContent = '请输入演员国籍 '
+        var countryInput = document.createElement('input');
+        countryInput.setAttribute('type', 'text');
+        countryInput.setAttribute('id', 'country');
+        countryInput.setAttribute('name', 'country');
+		actItem.appendChild(country);   //将标签和输入框添加到表单项元素中
+        actItem.appendChild(countryInput);
+        actItem.appendChild(backspace);
+
+        var relation = document.createElement('label');
+        relation.setAttribute('for', 'relation');
+        relation.textContent = '请选择演员身份 '
+        var relationSelect = document.createElement('select');
+        relationSelect.setAttribute('id', 'select1');
+        relationSelect.setAttribute('name', 'select1');
+        var relation1 = document.createElement('option');
+        relation1.setAttribute('value', 'relation1');
+        relation1.textContent = '主演';
+        var relation2 = document.createElement('option');
+        relation2.setAttribute('value', 'relation2');
+        relation2.textContent = '导演';
+        relationSelect.appendChild(relation1);
+        relationSelect.appendChild(relation2);
+        actItem.appendChild(relation)
+        actItem.appendChild(relationSelect);
+        actItem.appendChild(backspace);
+
+        actFormItems.appendChild(actItem);  //将表单项添加到表单项容器中
+        actForm.appendChild(actFormItems);  //将表单项容器添加到表单中
+        actFormGroup.appendChild(actForm);  //将表单添加到表单组中
+        formContainer.appendChild(actFormGroup);  //将新的表单组添加到表单容器中
+    }
+
+    function deleteForm() 
+    {
+        var formContainer = document.getElementById('formContainer');
+        var formGroups = formContainer.getElementsByClassName('form-group');
+        if (formGroups.length > 1) 
+        {
+            formGroups[formGroups.length - 1].remove();
+        }
+        if (formCount > 1)
+        {
+            formCount--;
+        }
+
+    }
+</script>
+{% endblock 登录者电影录入 %} 

@@ -40,70 +40,34 @@ class Movie_info(movie_db.Model):
     mv_type = movie_db.Column(movie_db.String(10))
     year = movie_db.Column(movie_db.Integer) #这里要限制输入年份的区间1000~2100，可以在前端限制
     mv_box = movie_db.Column(movie_db.Float)
-    mark = movie_db.Column(movie_db.Text) #从网站爬取的评价
-    user_mv_comments = movie_db.Column(movie_db.Text) #用户在系统中发表的评价
-    mv_awards = movie_db.Column(movie_db.Text) #电影获得的奖项
-    actors = movie_db.relationship('Actor_info', secondary = assoc_table, back_populates = 'movies')
+    online_rate = movie_db.Column(movie_db.Float) #从网站爬取的评分
 
 class Actor_info(movie_db.Model):
     act_id = movie_db.Column(movie_db.String(10), nullable = False, primary_key=True)
     act_name = movie_db.Column(movie_db.String(20), nullable = False)
-    gender = movie_db.Column(movie_db.String(2), nullable = False)
+    gender = movie_db.Column(movie_db.String(2))
     act_country = movie_db.Column(movie_db.String(20))
-    user_actor_comments = movie_db.Column(movie_db.Text)
-    actor_awards = movie_db.Column(movie_db.Text)
-    movies = movie_db.relationship('Movie_info', secondary = assoc_table, back_populates = 'actors')
 
-# class Movie_form(FlaskForm):  #创建电影表单，并对域完整性进行维护
-#     mv_name = StringField('Movie_name', validators = [DataRequired(), Length(min=1, max=20)])
-#     rls_date = DateField('Release_date', format = '%Y/%m/%d')
-#     mv_country = SelectField('Movie_country', choices = [('中国','中国'),
-#                                                         ('法国','法国'),
-#                                                         ('日本','日本'),
-#                                                         ('澳大利亚','澳大利亚'),
-#                                                         ('英国','英国'),
-#                                                         ('埃及','埃及'),
-#                                                         ('加拿大','加拿大'),
-#                                                         ('韩国','韩国'),
-#                                                         ('美国','美国'),
-#                                                         ('墨西哥','墨西哥'),
-#                                                         ('巴西','巴西'),
-#                                                         ('巴拿马','巴拿马'),
-#                                                         ('波兰','波兰'),
-#                                                         ('芬兰','芬兰'),
-#                                                         ('瑞典','瑞典'),
-#                                                         ('挪威','挪威'),
-#                                                         ('菲律宾','菲律宾'),
-#                                                         ('越南','越南'),
-#                                                         ('老挝','老挝'),
-#                                                         ('印度','印度'),
-#                                                         ('巴基斯坦','巴基斯坦')])
-#     mv_type = SelectField('Movie_type', choices = [('动作','动作'),
-#                                                 ('爱情','爱情'),
-#                                                 ('喜剧','喜剧'),
-#                                                 ('战争','战争'),
-#                                                 ('恐怖','恐怖'),
-#                                                 ('文艺','文艺'),
-#                                                 ('科幻','科幻'),
-#                                                 ('伦理','伦理'),
-#                                                 ('冒险','冒险'),
-#                                                 ('剧情','剧情'),
-#                                                 ('惊悚','惊悚'),
-#                                                 ('家庭','家庭'),
-#                                                 ('运动','运动'),
-#                                                 ('奇幻','奇幻'),
-#                                                 ('历史','历史'),
-#                                                 ('悬疑','悬疑'),
-#                                                 ('歌舞','歌舞'),
-#                                                 ('纪录','纪录'),
-#                                                 ('犯罪','犯罪'),
-#                                                 ('西部','西部')])
-#     mv_box = FloatField('Movie_box')
-#     mark = TextAreaField('Movie_remark') #从网站爬取的评价
-#     user_mv_comments = TextAreaField('User_remark') #用户在系统中发表的评价
-#     mv_awards = TextAreaField('Movie_awards') #电影获得的奖项
-#     movie_search_submit = SubmitField('Search_movie')
+class User_info(movie_db.Model):
+    username = movie_db.Column(movie_db.String(10), nullable = False, primary_key=True)
+    tag = movie_db.Column(movie_db.String(40)) #用不多于20个字描述一下自己
 
+class Mv_Act(movie_db.Model):
+    relation_type = movie_db.Column(movie_db.String(10), nullable = False, primary_key=True) #只允许填写主演、导演
+    act_id = movie_db.Column(movie_db.String(10), nullable = False)
+    mv_id = movie_db.Column(movie_db.String(10), nullable = False)
+    
+class Mv_User():
+    mv_rate= movie_db.Column(movie_db.Float, nullable = False, primary_key=True)  #用户在系统中的评分
+    username = movie_db.Column(movie_db.String(10), nullable = False)
+    mv_id = movie_db.Column(movie_db.String(10), nullable = False)
+
+class Act_User():
+    act_rate = movie_db.Column(movie_db.Float, nullable = False, primary_key=True) #用户在系统中的评分
+    username = movie_db.Column(movie_db.String(10), nullable = False)
+    act_id = movie_db.Column(movie_db.String(10), nullable = False)
+
+#以下为相关装饰器及其对应函数：
 @app.route('/', methods = ['GET', 'POST'])
 def search():
     if request.method == 'POST': #关键，如果表单提交了再渲染搜索结果的界面！！
@@ -164,8 +128,9 @@ def search():
     else: #若未填写表单并发出搜索请求，则直接显示电影展示界面
         return render_template('mainpage_base.html')
 
-#@app.route('/search', methods = ['GET', 'POST']) #搜索装饰器
-
+@app.route('/edit', methods = ['GET', 'POST']) #编辑信息装饰器
+def edit():
+    return render_template('admin_page.html')
 
 
     
