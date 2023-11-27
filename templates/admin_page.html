@@ -1,121 +1,129 @@
 {% extends 'mainpage_base.html' %}
 
-{% block 图片展示 %} <!--这里将图片展示区用作展示所有电影库内的电影，并适当进行分页操作-->
+{% block 图片展示 %} <!--这里在管理员界面用于编辑、添加、删除数据-->
+<div style="padding: 20px;">
+    <p>数据功能区</p>
+    <ul class="button-group radius">
+      <li><button type="button" class="button" data-reveal-id="add_info">添加</button></li>
+      <li><button type="button" class="button">批量删除</button></li>
+    </ul>
 
-{% endblock 图片展示 %}
-
-
-{% block 登录者电影录入 %} <!--这里插入一个表单，进行详细的信息录入工作-->
-<div id="formContainer">
-    <!-- 初始化的表单 -->
-    <div class="form-group">
-        <form class="act_Form">
-            <div class="row" id="formItems1">
-                <br>
-                <div class="small-12 columns form-item">
-                    请输入电影ID
-                    <input type="text" name = "mv_id"> <!--这里加一个功能：如果用户不指定，就自动分配；如果用户指定，就判断是否合法-->
-                    请输入电影名称
-                    <input type="text" name = "mv_name">
-                    请按xxxx-xx-xx格式输入日期
-                    <input type="text" name = "date">
-                    请选择电影对应的国家
-                    <select name = "mv_country">
-                        <option></option>
-                        <option>中国</option>
-                        <option>法国</option>
-                        <option>日本</option>
-                        <option>澳大利亚</option>
-                        <option>英国</option>
-                        <option>埃及</option>
-                        <option>加拿大</option>
-                        <option>韩国</option>
-                        <option>美国</option>
-                        <option>墨西哥</option>
-                        <option>巴西</option>
-                        <option>巴拿马</option>
-                        <option>波兰</option>
-                        <option>芬兰</option>
-                        <option>瑞典</option>
-                        <option>挪威</option>
-                        <option>菲律宾</option>
-                        <option>越南</option>
-                        <option>老挝</option>
-                        <option>印度</option>
-                        <option>巴基斯坦</option>
-                    </select>
-                    请选择电影的类型
-                    <select name = "mv_type">
-                        <option></option>
-                        <option>动作</option>
-                        <option>爱情</option>
-                        <option>喜剧</option>
-                        <option>战争</option>
-                        <option>恐怖</option>
-                        <option>文艺</option>
-                        <option>科幻</option>
-                        <option>伦理</option>
-                        <option>冒险</option>
-                        <option>剧情</option>
-                        <option>惊悚</option>
-                        <option>家庭</option>
-                        <option>运动</option>
-                        <option>奇幻</option>
-                        <option>历史</option>
-                        <option>悬疑</option>
-                        <option>歌舞</option>
-                        <option>纪录</option>
-                        <option>犯罪</option>
-                        <option>西部</option>                      
-                    </select>
-                    请输入票房
-                    <input type="text" name = "box_2">
+    <div id="add_info" class="reveal-modal" data-reveal>
+        <div id="formContainer">
+            <fieldset>
+                <legend>电影信息</legend>
+                <div class="form-group"> <!-- 初始化的表单 -->
+                    <form class="act_Form">
+                        <div class="row" id="formItems1">
+                            <br>
+                            <div class="small-12 columns form-item">
+                                请输入电影ID
+                                <input type="text" name = "mv_id"> <!--这里加一个功能：如果用户不指定，就自动分配；如果用户指定，就判断是否合法-->
+                                请输入电影名称
+                                <input type="text" name = "mv_name">
+                                请按“xx(月)-xx(日)-xxxx(年)”格式输入日期
+                                <input type="text" name = "date">
+                                请选择电影对应的国家
+                                <select name = "mv_country">
+                                    <option></option>
+                                    <option>中国</option>
+                                    <option>法国</option>
+                                    <option>日本</option>
+                                    <option>澳大利亚</option>
+                                    <option>英国</option>
+                                    <option>埃及</option>
+                                    <option>加拿大</option>
+                                    <option>韩国</option>
+                                    <option>美国</option>
+                                    <option>墨西哥</option>
+                                    <option>巴西</option>
+                                    <option>巴拿马</option>
+                                    <option>波兰</option>
+                                    <option>芬兰</option>
+                                    <option>瑞典</option>
+                                    <option>挪威</option>
+                                    <option>菲律宾</option>
+                                    <option>越南</option>
+                                    <option>老挝</option>
+                                    <option>印度</option>
+                                    <option>巴基斯坦</option>
+                                </select>
+                                请选择电影的类型
+                                <select name = "mv_type">
+                                    <option></option>
+                                    <option>动作</option>
+                                    <option>爱情</option>
+                                    <option>喜剧</option>
+                                    <option>战争</option>
+                                    <option>恐怖</option>
+                                    <option>文艺</option>
+                                    <option>科幻</option>
+                                    <option>伦理</option>
+                                    <option>冒险</option>
+                                    <option>剧情</option>
+                                    <option>惊悚</option>
+                                    <option>家庭</option>
+                                    <option>运动</option>
+                                    <option>奇幻</option>
+                                    <option>历史</option>
+                                    <option>悬疑</option>
+                                    <option>歌舞</option>
+                                    <option>纪录</option>
+                                    <option>犯罪</option>
+                                    <option>西部</option>                      
+                                </select>
+                                请输入票房
+                                <input type="text" name = "box_2">
+                            </div>
+                        </div>
+                    </form>
                 </div>
-            </div>
-        </form>
-    </div>
-</div>
-
-<div id="formContainer">
-    <!-- 初始化的表单 -->
-    <div class="form-group">
-        <form class="act_Form">
-            <div class="row" id="formItems1">
-                <div class="small-12 columns form-item">
-                    <hr>
-                    请输入演员ID
-                    <input type="text" name = "act_id">
-                    请输入演员姓名
-                    <input type="text" name = "act_name">
-                    请选择演员性别
-                    <select name = "gender">
-                        <option></option>
-                        <option>男</option>
-                        <option>女</option>
-                    </select>
-                    请输入演员国籍
-                    <input type="text" name = "country">
-                    请选择演员身份
-                    <select name = "act_relation">
-                        <option>主演</option>
-                        <option>导演</option>
-                    </select>
+            </fieldset>
+        
+            <fieldset>
+                <legend>演员 1 (可点击“增加演员”按钮加入多位演员)</legend>
+                <div class="form-group">
+                    <form class="act_Form">
+                        <div class="row" id="formItems2">
+                            <div class="small-12 columns form-item">
+                                请输入演员ID
+                                <input type="text" name = "act_id">
+                                请输入演员姓名
+                                <input type="text" name = "act_name">
+                                请选择演员性别
+                                <select name = "gender">
+                                    <option></option>
+                                    <option>男</option>
+                                    <option>女</option>
+                                </select>
+                                请输入演员国籍
+                                <input type="text" name = "country">
+                                请选择演员身份
+                                <select name = "act_relation">
+                                    <option></option>
+                                    <option>主演</option>
+                                    <option>导演</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
                 </div>
+            </fieldset>
+        </div>
+        
+        <div class="row">
+            <div class="small-12 columns">
+                <button type="button" onclick="addForm()">增加演员</button>
+                <button type="button" onclick="deleteForm()">删除演员</button>
             </div>
-        </form>
+        </div>
+
+        <button onclick="gatherAndSubmitFormData()">Submit Forms</button>
+
+        <a class="close-reveal-modal">&times;</a> <!--关闭窗口按钮-->
     </div>
 </div>
 
-<div class="row">
-    <div class="small-12 columns">
-        <button type="button" onclick="addForm()">增加演员</button>
-        <button type="button" onclick="deleteForm()">删除演员</button>
-    </div>
-</div>
-    
-    
-    <input class="button" type = "submit" name = "add_info" value="确认添加">  <!--在提交按钮处采用不同的name，对表单加以区分-->
-</form>
 
 <script>
     var formCount = 1;
@@ -143,8 +151,7 @@
 
         var backspace = document.createElement('br'); //回车符
 
-        var line = document.createElement('hr'); //增加分割线
-        actItem.appendChild(line)
+        var act_fieldset = document.createElement('fieldset'); //添加分隔框
 
         var idLabel = document.createElement('label');
         idLabel.setAttribute('for', 'actorID');
@@ -159,7 +166,7 @@
 
         var nameLabel = document.createElement('label');
         nameLabel.setAttribute('for', 'actorName');
-        nameLabel.textContent = '请输入演员姓名 '
+        nameLabel.textContent = '请输入演员姓名 ';
         var nameInput = document.createElement('input');
         nameInput.setAttribute('type', 'text');
         nameInput.setAttribute('id', 'actorName');
@@ -207,12 +214,16 @@
         var relationSelect = document.createElement('select');
         relationSelect.setAttribute('id', 'select1');
         relationSelect.setAttribute('name', 'select1');
+        var relation0 = document.createElement('option');
+        relation0.setAttribute('value', 'relation0');
+        relation0.textContent = '';
         var relation1 = document.createElement('option');
         relation1.setAttribute('value', 'relation1');
         relation1.textContent = '主演';
         var relation2 = document.createElement('option');
         relation2.setAttribute('value', 'relation2');
         relation2.textContent = '导演';
+        relationSelect.appendChild(relation0);
         relationSelect.appendChild(relation1);
         relationSelect.appendChild(relation2);
         actItem.appendChild(relation)
@@ -221,7 +232,9 @@
 
         actFormItems.appendChild(actItem);  //将表单项添加到表单项容器中
         actForm.appendChild(actFormItems);  //将表单项容器添加到表单中
-        actFormGroup.appendChild(actForm);  //将表单添加到表单组中
+        act_fieldset.appendChild(actLegend);
+        act_fieldset.appendChild(actForm);
+        actFormGroup.appendChild(act_fieldset);
         formContainer.appendChild(actFormGroup);  //将新的表单组添加到表单容器中
     }
 
@@ -229,7 +242,7 @@
     {
         var formContainer = document.getElementById('formContainer');
         var formGroups = formContainer.getElementsByClassName('form-group');
-        if (formGroups.length > 1) 
+        if (formGroups.length > 2) 
         {
             formGroups[formGroups.length - 1].remove();
         }
@@ -237,7 +250,6 @@
         {
             formCount--;
         }
-
     }
 
     function gatherAndSubmitFormData() 
@@ -274,4 +286,16 @@
         });
     }
 </script>
+{% endblock 图片展示 %}
+
+
+{% block 登录者电影录入 %} <!--展示所有电影数据信息-->
+<div style="padding:20px;">
+    {% for movie in rst_movies %}
+    <div class="panel radius">
+      <p>电影编号: {{ movie.mv_id }}</p>
+      <p>电影名称: {{ movie.mv_name }}</p>
+    </div>
+    {% endfor %}
+</div>
 {% endblock 登录者电影录入 %} 

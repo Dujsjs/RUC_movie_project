@@ -1,95 +1,82 @@
+<!-- index.html -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dynamic Forms with Foundation</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/foundation/6.6.3/css/foundation.min.css">
+  <title>Dynamic Forms with Flask</title>
 </head>
 <body>
 
-<div class="row">
-  <div class="column">
-    
-    <div id="formContainer">
-      <!-- 初始化的表单 -->
-      <div class="form-group">
-        <form class="act_Form">
-          <div class="row" id="formItems1">
-            <div class="small-12 columns form-item">
-              <label for="item1">演员 1</label>
-              <input type="text" id="item1" name="item1">
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="small-12 columns">
-        <button type="button" onclick="addForm()">增加演员</button>
-        <button type="button" onclick="deleteForm()">删除演员</button>
-      </div>
-    </div>
-
+  <div id="formContainer">
+    <!-- Dynamic forms with fieldset elements will be added here -->
   </div>
-</div>
 
-<script>
-    var formCount = 1;
+  <button onclick="addForm()">Add Form</button>
+  <button onclick="gatherAndSubmitFormData()">Submit Forms</button>
 
-    function addForm() 
-    {
-        formCount++;
-        var formContainer = document.getElementById('formContainer');
+  <script>
+    function addForm() {
+      // Create a new form
+      var formContainer = document.getElementById('formContainer');
+      var formNumber = formContainer.childElementCount + 1;
 
-        var newFormGroup = document.createElement('div');
-        newFormGroup.className = 'form-group';
+      var newFieldset = document.createElement('fieldset');
+      var newLegend = document.createElement('legend');
+      newLegend.textContent = 'Form ' + formNumber;
+      newFieldset.appendChild(newLegend);
 
-        var newForm = document.createElement('form');
-        newForm.className = 'act_Form';
+      var newForm = document.createElement('form');
+      newForm.id = 'form' + formNumber;
 
-        var newFormItems = document.createElement('div');
-        newFormItems.className = 'row';
-        newFormItems.id = '演员 ' + formCount;
+      var newLabel = document.createElement('label');
+      newLabel.textContent = 'Item ' + formNumber + ':';
 
-        var newItem = document.createElement('div');
-        newItem.className = 'small-12 columns form-item';
+      var newInput = document.createElement('input');
+      newInput.type = 'text';
+      newInput.name = 'item' + formNumber;
 
-        var newLabel = document.createElement('label');
-        newLabel.setAttribute('for', 'item1');
-        newLabel.textContent = '演员 ' + formCount;
+      newForm.appendChild(newLabel);
+      newForm.appendChild(newInput);
 
-        var newInput = document.createElement('input');
-        newInput.setAttribute('type', 'text');
-        newInput.setAttribute('id', 'item1');
-        newInput.setAttribute('name', 'item1');
-
-        newItem.appendChild(newLabel);
-        newItem.appendChild(newInput);
-        newFormItems.appendChild(newItem);
-
-        newForm.appendChild(newFormItems);
-        newFormGroup.appendChild(newForm);
-        formContainer.appendChild(newFormGroup);
+      newFieldset.appendChild(newForm);
+      formContainer.appendChild(newFieldset);
     }
 
-    function deleteForm() 
-    {
-        var formContainer = document.getElementById('formContainer');
-        var formGroups = formContainer.getElementsByClassName('form-group');
-        if (formGroups.length > 1) 
-        {
-            formGroups[formGroups.length - 1].remove();
-        }
-    }
-</script>
+    function gatherAndSubmitFormData() {
+      var formContainer = document.getElementById('formContainer');
+      var fieldsets = formContainer.querySelectorAll('fieldset');
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/foundation/6.6.3/js/foundation.min.js"></script>
-<script>
-  $(document).foundation();
-</script>
+      var formData = {};
+
+      fieldsets.forEach((fieldset, index) => {
+        var formFields = {};
+        fieldset.querySelectorAll('input').forEach(input => {
+          formFields[input.name] = input.value;
+        });
+
+        formData['form' + (index + 1)] = formFields;
+      });
+
+      // Send the data to the Flask backend
+      fetch('/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+      .then(response => response.json())
+      .then(data => {
+        // Handle the response from the server
+        console.log(data);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    }
+  </script>
 
 </body>
 </html>

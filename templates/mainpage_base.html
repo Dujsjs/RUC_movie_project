@@ -53,12 +53,12 @@
                 <div class="content active" id="search_movie">
                   <form method="post"> <!--这里的action一定要指向对应的提交函数-->
                     <fieldset>
-                      <legend>请输入待查找电影[至少一方面]的信息</legend>
+                      <legend>请输入待查找电影[至少一方面]的信息(支持模糊匹配)</legend>
                       请输入电影ID
                       <input type="text" name = "mv_id"> <!--若加入required，则表示数据是必须输入的-->
                       请输入电影名称
                       <input type="text" name = "mv_name">
-                      请按xxxx-xx-xx格式输入日期
+                      请按“xx(月)-xx(日)-xxxx(年)”格式输入日期
                       <input type="text" name = "date">
                       请选择电影对应的国家
                       <select name = "mv_country">
@@ -124,7 +124,7 @@
                 <div class="content" id="search_actor">
                   <form method="post">
                     <fieldset>
-                      <legend>请输入待查找演员[至少一方面]的信息</legend>
+                      <legend>请输入待查找演员[至少一方面]的信息(支持模糊匹配)</legend>
                       请输入演员ID
                       <input type="text" name = "act_id">
                       请输入演员姓名

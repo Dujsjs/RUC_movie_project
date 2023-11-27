@@ -207,7 +207,7 @@ def search():
             mv_name = request.form.get('mv_name') 
             date = request.form.get('date')
             if date:
-                date = datetime.strptime(date, "%Y-%m-%d") #时间非空，再进行转化
+                date = datetime.strptime(date, "%m-%d-%Y") #时间非空，再进行转化
             mv_country = request.form.get('mv_country')
             mv_type = request.form.get('mv_type')
             box_1 = request.form.get('box_1')
@@ -240,7 +240,7 @@ def search():
             gender = request.form.get('gender')
             act_country = request.form.get('act_country')
 
-            temp_query = Movie_info.query
+            temp_query = Actor_info.query
             if act_id:
                 temp_query = temp_query.filter(Actor_info.act_id == act_id)
             if act_name:
@@ -258,9 +258,14 @@ def search():
     else: #若未填写表单并发出搜索请求，则直接显示电影展示界面
         return render_template('mainpage_base.html')
 
-@app.route('/edit', methods = ['GET', 'POST']) #编辑信息装饰器
-def edit():
-    return render_template('admin_page.html')
+@app.route('/admin', methods = ['GET', 'POST']) #编辑信息装饰器
+def demo():
+    if request.method == 'GET':
+        search_rst = Movie_info.query.all()
+    return render_template('admin_page.html', rst_movies = search_rst)
+
+# def edit():
+#     return render_template('admin_page.html')
 
 
     
