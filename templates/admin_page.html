@@ -239,5 +239,39 @@
         }
 
     }
+
+    function gatherAndSubmitFormData() 
+    {
+        var formContainer = document.getElementById('formContainer');
+        var forms = formContainer.querySelectorAll('form');
+
+        var formData = {};
+
+        forms.forEach((form, index) => {
+        var formFields = {};
+        form.querySelectorAll('input').forEach(input => {
+            formFields[input.name] = input.value;
+        });
+
+        formData['form' + (index + 1)] = formFields;
+        });
+
+        // 传递到flask的后端管理程序
+        fetch('/submit', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+        })
+        .then(response => response.json())
+        .then(data => {
+        // 处理服务器响应
+        console.log(data);
+        })
+        .catch(error => {
+        console.error('Error:', error);
+        });
+    }
 </script>
 {% endblock 登录者电影录入 %} 
