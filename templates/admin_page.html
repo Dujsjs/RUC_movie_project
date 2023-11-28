@@ -13,7 +13,7 @@
             <fieldset>
                 <legend>电影信息</legend>
                 <div class="form-group"> <!-- 初始化的表单 -->
-                    <form class="act_Form">
+                    <form class="mv_Form" method="post">
                         <div class="row" id="formItems1">
                             <br>
                             <div class="small-12 columns form-item">
@@ -25,7 +25,7 @@
                                 <input type="text" name = "date">
                                 请选择电影对应的国家
                                 <select name = "mv_country">
-                                    <option></option>
+                                    <option>暂无</option>
                                     <option>中国</option>
                                     <option>法国</option>
                                     <option>日本</option>
@@ -50,7 +50,7 @@
                                 </select>
                                 请选择电影的类型
                                 <select name = "mv_type">
-                                    <option></option>
+                                    <option>暂无</option>
                                     <option>动作</option>
                                     <option>爱情</option>
                                     <option>喜剧</option>
@@ -73,7 +73,7 @@
                                     <option>西部</option>                      
                                 </select>
                                 请输入票房
-                                <input type="text" name = "box_2">
+                                <input type="text" name = "box">
                             </div>
                         </div>
                     </form>
@@ -83,7 +83,7 @@
             <fieldset>
                 <legend>演员 1 (可点击“增加演员”按钮加入多位演员)</legend>
                 <div class="form-group">
-                    <form class="act_Form">
+                    <form class="act_Form" method="post">
                         <div class="row" id="formItems2">
                             <div class="small-12 columns form-item">
                                 请输入演员ID
@@ -92,7 +92,7 @@
                                 <input type="text" name = "act_name">
                                 请选择演员性别
                                 <select name = "gender">
-                                    <option></option>
+                                    <option>暂无</option>
                                     <option>男</option>
                                     <option>女</option>
                                 </select>
@@ -100,7 +100,7 @@
                                 <input type="text" name = "country">
                                 请选择演员身份
                                 <select name = "act_relation">
-                                    <option></option>
+                                    <option>暂无</option>
                                     <option>主演</option>
                                     <option>导演</option>
                                 </select>
@@ -138,6 +138,7 @@
 
         var actForm = document.createElement('form');
         actForm.className = 'act_Form';
+        actForm.method = 'POST'
 
         var actFormItems = document.createElement('div');
         actFormItems.className = 'row';
@@ -154,23 +155,23 @@
         var act_fieldset = document.createElement('fieldset'); //添加分隔框
 
         var idLabel = document.createElement('label');
-        idLabel.setAttribute('for', 'actorID');
+        idLabel.setAttribute('for', 'act_id');
         idLabel.textContent = '请输入演员ID '
         var idInput = document.createElement('input');
         idInput.setAttribute('type', 'text');
-        idInput.setAttribute('id', 'actorID');
-        idInput.setAttribute('name', 'actorID');
+        idInput.setAttribute('id', 'act_id');
+        idInput.setAttribute('name', 'act_id');
         actItem.appendChild(idLabel);   //将标签和输入框添加到表单项元素中
         actItem.appendChild(idInput);
         actItem.appendChild(backspace);
 
         var nameLabel = document.createElement('label');
-        nameLabel.setAttribute('for', 'actorName');
+        nameLabel.setAttribute('for', 'act_name');
         nameLabel.textContent = '请输入演员姓名 ';
         var nameInput = document.createElement('input');
         nameInput.setAttribute('type', 'text');
-        nameInput.setAttribute('id', 'actorName');
-        nameInput.setAttribute('name', 'actorName');
+        nameInput.setAttribute('id', 'act_name');
+        nameInput.setAttribute('name', 'act_name');
         actItem.appendChild(nameLabel);   //将标签和输入框添加到表单项元素中
         actItem.appendChild(nameInput);
         actItem.appendChild(backspace);
@@ -179,16 +180,16 @@
         gender.setAttribute('for', 'gender');
         gender.textContent = '请选择演员性别 '
         var genderSelect = document.createElement('select');
-        genderSelect.setAttribute('id', 'select1');
-        genderSelect.setAttribute('name', 'select1');
+        genderSelect.setAttribute('id', 'gender');
+        genderSelect.setAttribute('name', 'gender');
         var gender1 = document.createElement('option');
-        gender1.setAttribute('value', 'gender1');
-        gender1.textContent = '';
+        gender1.setAttribute('value', '暂无');
+        gender1.textContent = '暂无';
         var gender2 = document.createElement('option');
-        gender2.setAttribute('value', 'gender2');
+        gender2.setAttribute('value', '男');
         gender2.textContent = '男';
         var gender3 = document.createElement('option');
-        gender3.setAttribute('value', 'gender3');
+        gender3.setAttribute('value', '女');
         gender3.textContent = '女';
         genderSelect.appendChild(gender1);
         genderSelect.appendChild(gender2);
@@ -209,19 +210,19 @@
         actItem.appendChild(backspace);
 
         var relation = document.createElement('label');
-        relation.setAttribute('for', 'relation');
+        relation.setAttribute('for', 'act_relation');
         relation.textContent = '请选择演员身份 '
         var relationSelect = document.createElement('select');
-        relationSelect.setAttribute('id', 'select1');
-        relationSelect.setAttribute('name', 'select1');
+        relationSelect.setAttribute('id', 'act_relation');
+        relationSelect.setAttribute('name', 'act_relation');
         var relation0 = document.createElement('option');
-        relation0.setAttribute('value', 'relation0');
-        relation0.textContent = '';
+        relation0.setAttribute('value', '暂无');
+        relation0.textContent = '暂无';
         var relation1 = document.createElement('option');
-        relation1.setAttribute('value', 'relation1');
+        relation1.setAttribute('value', '主演');
         relation1.textContent = '主演';
         var relation2 = document.createElement('option');
-        relation2.setAttribute('value', 'relation2');
+        relation2.setAttribute('value', '导演');
         relation2.textContent = '导演';
         relationSelect.appendChild(relation0);
         relationSelect.appendChild(relation1);
@@ -252,6 +253,39 @@
         }
     }
 
+    // function gatherAndSubmitFormData() 
+    // {
+    //     var formContainer = document.getElementById('formContainer');
+    //     var forms = formContainer.querySelectorAll('form');
+
+    //     var formData = {};
+
+    //     forms.forEach((form, index) => {
+    //     var formFields = {};
+    //     form.querySelectorAll('input').forEach(input => {
+    //         formFields[input.name] = input.value;
+    //     });
+
+    //     formData['form' + (index + 1)] = formFields;
+    //     });
+
+    //     fetch('/admin', { //注意：这里的“/admin”要和后端装饰函数的URL相对应
+    //     method: 'POST',
+    //     headers: {
+    //         'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify(formData),
+    //     })
+    //     .then(response => response.json())
+    //     .then(data => {
+    //     // 处理服务器响应
+    //     console.log(data);
+    //     })
+    //     .catch(error => {
+    //     console.error('Error:', error);
+    //     });
+    // }
+
     function gatherAndSubmitFormData() 
     {
         var formContainer = document.getElementById('formContainer');
@@ -261,28 +295,26 @@
 
         forms.forEach((form, index) => {
         var formFields = {};
-        form.querySelectorAll('input').forEach(input => {
+        form.querySelectorAll('input, select').forEach(input => {
             formFields[input.name] = input.value;
         });
 
         formData['form' + (index + 1)] = formFields;
         });
 
-        // 传递到flask的后端管理程序
-        fetch('/submit', {
-        method: 'POST',
-        headers: {
+        fetch('/admin', {  //注意：这里的“/admin”要和后端装饰函数的URL相对应
+            method: 'POST',
+            headers: {
             'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+            },
+            body: JSON.stringify(formData),
         })
         .then(response => response.json())
         .then(data => {
-        // 处理服务器响应
-        console.log(data);
+            console.log(data);
         })
         .catch(error => {
-        console.error('Error:', error);
+            console.error('Error:', error);
         });
     }
 </script>

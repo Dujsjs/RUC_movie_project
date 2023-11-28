@@ -261,12 +261,28 @@ def search():
 @app.route('/admin', methods = ['GET', 'POST']) #编辑信息装饰器
 def demo():
     if request.method == 'GET':
-        search_rst = Movie_info.query.all()
-    return render_template('admin_page.html', rst_movies = search_rst)
+        search_rst = Movie_info.query.all() #未提交表单，则仅仅渲染页面
+        return render_template('admin_page.html', rst_movies = search_rst)
+    if request.method == 'POST':
+        search_rst = Movie_info.query.all() #提交了表单，首先保证仍然显示所有电影信息
+        
+        new_data = request.get_json() #以嵌套字典的形式返回输入值
 
-# def edit():
-#     return render_template('admin_page.html')
+        temp_mv_info = Movie_info(mv_id = new_data['form1']['mv_id'], mv_name = new_data['form1']['mv_name'], rls_date = new_data['form1']['date'], mv_country = new_data['form1']['mv_country'], mv_type = new_data['form1']['mv_type'], year = (new_data['form1']['date'])[-4:], mv_box = new_data['form1']['box']) #更新电影表信息
+        movie_db.session.add(temp_mv_info)
 
+        all_act_form = list(new_data.keys())
+        del all_act_form[0]
+        for form_name in all_act_form:
+            temp_act_info = Actor_info(act_id = new_data[form_name]['act_id'], act_name = new_data[form_name]['act_name'], gender = new_data[form_name]['gender'], act_country = new_data[form_name]['country']) #更新演员表信息
+            id_list = Mv_Act.query.with_entities(Mv_Act.id).all() #查找当前的id编号
+            max_id_current = max(list(map(int, id_list))) #找出最大值，加1即可实现自动编号
+            temp_act_mv_relation = Mv_Act(id = str(max_id_current + 1), relation_type = new_data[form_name]['act_relation'], act_id = new_data[form_name]['act_id'], mv_id = new_data['form1']['mv_id']) #更新关系表信息
+            movie_db.session.add(temp_act_info)
+            movie_db.session.add(temp_act_mv_relation)
+
+        movie_db.session.commit() #最终全部提交
+        return render_template('admin_page.html', rst_movies = search_rst)
 
     
 #@app.route('/userpage/<string: username>', methods = ['GET', 'POST'])
