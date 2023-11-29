@@ -118,9 +118,9 @@
             </div>
         </div>
 
-        <button onclick="gatherAndSubmitFormData()">Submit Forms</button>
+        <button onclick="gatherAndSubmitFormData()">确认添加</button>
 
-        <a class="close-reveal-modal">&times;</a> <!--关闭窗口按钮-->
+        <a class="close-reveal-modal">&times;</a>  <!--这是关闭窗口的按钮-->
     </div>
 </div>
 
@@ -253,39 +253,6 @@
         }
     }
 
-    // function gatherAndSubmitFormData() 
-    // {
-    //     var formContainer = document.getElementById('formContainer');
-    //     var forms = formContainer.querySelectorAll('form');
-
-    //     var formData = {};
-
-    //     forms.forEach((form, index) => {
-    //     var formFields = {};
-    //     form.querySelectorAll('input').forEach(input => {
-    //         formFields[input.name] = input.value;
-    //     });
-
-    //     formData['form' + (index + 1)] = formFields;
-    //     });
-
-    //     fetch('/admin', { //注意：这里的“/admin”要和后端装饰函数的URL相对应
-    //     method: 'POST',
-    //     headers: {
-    //         'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify(formData),
-    //     })
-    //     .then(response => response.json())
-    //     .then(data => {
-    //     // 处理服务器响应
-    //     console.log(data);
-    //     })
-    //     .catch(error => {
-    //     console.error('Error:', error);
-    //     });
-    // }
-
     function gatherAndSubmitFormData() 
     {
         var formContainer = document.getElementById('formContainer');
@@ -321,7 +288,7 @@
 {% endblock 图片展示 %}
 
 
-{% block 登录者电影录入 %} <!--展示所有电影数据信息-->
+{% block 搜索结果 %} <!--跳过搜索，直接展示所有电影数据信息-->
 <div style="padding:20px;">
     {% for movie in rst_movies %}
     <div class="panel radius">
@@ -330,4 +297,4 @@
     </div>
     {% endfor %}
 </div>
-{% endblock 登录者电影录入 %} 
+{% endblock 搜索结果 %} 

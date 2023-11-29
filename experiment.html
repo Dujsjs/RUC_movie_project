@@ -1,82 +1,49 @@
-<!-- index.html -->
+<!-- 引入 Foundation CSS 和 JavaScript -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.7.3/css/foundation.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.7.3/js/vendor/jquery.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.7.3/js/vendor/what-input.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.7.3/js/foundation.min.js"></script>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dynamic Forms with Flask</title>
-</head>
-<body>
+<!-- 引入 Chart.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+<canvas id="myChart" width="400" height="200"></canvas>
+<script>
+  // 获取 Canvas 元素的上下文
+  var ctx = document.getElementById('myChart').getContext('2d');
 
-  <div id="formContainer">
-    <!-- Dynamic forms with fieldset elements will be added here -->
-  </div>
-
-  <button onclick="addForm()">Add Form</button>
-  <button onclick="gatherAndSubmitFormData()">Submit Forms</button>
-
-  <script>
-    function addForm() {
-      // Create a new form
-      var formContainer = document.getElementById('formContainer');
-      var formNumber = formContainer.childElementCount + 1;
-
-      var newFieldset = document.createElement('fieldset');
-      var newLegend = document.createElement('legend');
-      newLegend.textContent = 'Form ' + formNumber;
-      newFieldset.appendChild(newLegend);
-
-      var newForm = document.createElement('form');
-      newForm.id = 'form' + formNumber;
-
-      var newLabel = document.createElement('label');
-      newLabel.textContent = 'Item ' + formNumber + ':';
-
-      var newInput = document.createElement('input');
-      newInput.type = 'text';
-      newInput.name = 'item' + formNumber;
-
-      newForm.appendChild(newLabel);
-      newForm.appendChild(newInput);
-
-      newFieldset.appendChild(newForm);
-      formContainer.appendChild(newFieldset);
+  // 创建图表
+  var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+      datasets: [{
+        label: '# of Votes',
+        data: [12, 19, 3, 5, 2, 3],
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+          'rgba(255, 159, 64, 0.2)'
+        ],
+        borderColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)'
+        ],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
     }
-
-    function gatherAndSubmitFormData() {
-      var formContainer = document.getElementById('formContainer');
-      var fieldsets = formContainer.querySelectorAll('fieldset');
-
-      var formData = {};
-
-      fieldsets.forEach((fieldset, index) => {
-        var formFields = {};
-        fieldset.querySelectorAll('input').forEach(input => {
-          formFields[input.name] = input.value;
-        });
-
-        formData['form' + (index + 1)] = formFields;
-      });
-
-      // Send the data to the Flask backend
-      fetch('/submit', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      })
-      .then(response => response.json())
-      .then(data => {
-        // Handle the response from the server
-        console.log(data);
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
-    }
-  </script>
-
-</body>
-</html>
+  });
+</script>

@@ -2,11 +2,15 @@
 
 from flask import Flask, render_template
 from flask import request, url_for, redirect, flash
-from flask_wtf import FlaskForm
-from wtforms import StringField, FloatField, DateField, SelectField, TextAreaField, SubmitField
-from wtforms.validators import DataRequired, Length
+# from flask_wtf import FlaskForm
+# from wtforms import StringField, FloatField, DateField, SelectField, TextAreaField, SubmitField
+# from wtforms.validators import DataRequired, Length
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import create_engine
+from sqlalchemy.orm import joinedload, sessionmaker
+import pandas as pd
+
 import os
 import sys
 import click
@@ -232,7 +236,15 @@ def search():
             else:
                 pass
             search_rst = temp_query.all()
-            return render_template('search_mv.html', rst_movies = search_rst)
+
+            engine = create_engine('sqlite:///data.db') #链接数据库引擎
+            Session = sessionmaker(bind=engine)
+            session = Session()
+            df_search_rst = pd.read_sql(temp_query.statement, session.bind) #将查询结果转化为数据框
+            mv_name_list = df_search_rst['mv_name'].to_list()
+            mv_box_list = list(map(float, df_search_rst['mv_box'].to_list()))
+            chart_data = {'labels': mv_name_list, 'data': mv_box_list}
+            return render_template('search_mv.html', rst_movies = search_rst, mv_data = chart_data)
         
         elif 'search_act' in request.form:
             act_id = request.form.get('act_id')
@@ -262,10 +274,11 @@ def search():
 def demo():
     if request.method == 'GET':
         search_rst = Movie_info.query.all() #未提交表单，则仅仅渲染页面
+        print(search_rst)
         return render_template('admin_page.html', rst_movies = search_rst)
     if request.method == 'POST':
         search_rst = Movie_info.query.all() #提交了表单，首先保证仍然显示所有电影信息
-        
+
         new_data = request.get_json() #以嵌套字典的形式返回输入值
 
         temp_mv_info = Movie_info(mv_id = new_data['form1']['mv_id'], mv_name = new_data['form1']['mv_name'], rls_date = new_data['form1']['date'], mv_country = new_data['form1']['mv_country'], mv_type = new_data['form1']['mv_type'], year = (new_data['form1']['date'])[-4:], mv_box = new_data['form1']['box']) #更新电影表信息
