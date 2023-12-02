@@ -252,12 +252,12 @@ def search():
             mv_type_box_list = type_box.values.tolist()
             doughnut_data = {'labels': mv_type_list, 'data': mv_type_box_list}
 
-            radar_labels = ['电影票房', '网络评分', '获奖数量']
+            radar_labels = ['电影票房排名', '网络评分排名', '获奖数量排名']
             df_search_rst_ranked = df_search_rst
             columns_to_rank = ['mv_box', 'online_rate', 'prize_num']
             for col in columns_to_rank: # 对每列进行排名并将排名存储到新的列
                 rank_col = f'{col}_Rank'
-                df_search_rst_ranked[rank_col] =  df_search_rst_ranked[col].rank()
+                df_search_rst_ranked[rank_col] =  df_search_rst_ranked[col].rank(ascending=False)
 
             radar_data_sets = []
             for index, row in df_search_rst_ranked.iterrows(): #按行循环
