@@ -192,14 +192,22 @@
 
     {% block 图片展示 %}
     <!--电影海报滚动展示-->
-    <div style="padding:20px">
-      <h4>每日电影推荐</h4>
-      <ul class="clearing-thumbs" data-clearing>
-        <li><a href="rock600x400.jpg" class="th"><img data-caption="The Pulpit Rock" src="rock200x100.jpg" width="200" height="100"></a></li>
-        <li><a href="skies600x400.jpg" class="th"><img data-caption="Sunrise Skies" src="skies200x100.jpg" width="200" height="100"></a></li>
-        <li><a href="lights600x400.jpg" class="th"><img data-caption="Northern Lights" src="lights200x100.jpg" width="200" height="100"></a></li>
-      </ul>
+    <div class="row">
+      <div class="columns large-8">
+        <div id="featured" data-orbit>
+          <img src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fsafe-img.xhscdn.com%2Fbw1%2F18c5b504-c581-4d8d-80d7-fe267f65a742%3FimageView2%2F2%2Fw%2F1080%2Fformat%2Fjpg&refer=http%3A%2F%2Fsafe-img.xhscdn.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1704037169&t=bcc76416a59a445d9c8abdf8262ee2be" alt="slide image">
+          <img src="https://placehold.it/1200x500&text=Slide Image 2" alt="slide image">
+          <img src="https://placehold.it/1200x500&text=Slide Image 3" alt="slide image">
+        </div>
+      </div>
+
+      <div class="columns large-4" style="background-color:pink;">
+        <!-- 这里放置右侧内容 -->
+        <p>右侧内容，占据4列。</p>
+      </div>
     </div>
+
+
     <!--电影海报滚动展示结束-->
     {% endblock 图片展示 %}
 

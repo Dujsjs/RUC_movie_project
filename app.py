@@ -37,13 +37,13 @@ class Movie_info(movie_db.Model):
     mv_country = movie_db.Column(movie_db.String(20))
     mv_type = movie_db.Column(movie_db.String(10))
     year = movie_db.Column(movie_db.String(10)) #这里要限制输入年份的区间1000~2100，可以在前端限制
-    mv_box = movie_db.Column(movie_db.Float)
+    mv_box = movie_db.Column(movie_db.Float) #注意，传入数据后，类型不一致的sqlalchemy会自动修正！
     online_rate = movie_db.Column(movie_db.Float) #从网站爬取的评分
 
 class Actor_info(movie_db.Model):
     act_id = movie_db.Column(movie_db.String(10), nullable = False, primary_key=True)
     act_name = movie_db.Column(movie_db.String(20), nullable = False)
-    gender = movie_db.Column(movie_db.String(2))
+    gender = movie_db.Column(movie_db.String(10))
     act_country = movie_db.Column(movie_db.String(20))
 
 class User_info(movie_db.Model):
@@ -114,24 +114,24 @@ def drill_data():
         {'act_id':'2041', 'act_name':'米歇尔·罗德里格兹', 'gender':'女', 'act_country':'美国'}
     ]
     mv_info = [
-        {'mv_id':'1001', 'mv_name':'战狼2', 'rls_date':'07 27 2017 12:00AM', 'mv_country':'中国', 'type':'战争', 'year':'2017', 'box':'56.84'},
-        {'mv_id':'1002', 'mv_name':'哪吒之魔童降世', 'rls_date':'07 26 2019 12:00AM', 'mv_country':'中国', 'type':'动画', 'year':'2019', 'box':'50.15'},
-        {'mv_id':'1003', 'mv_name':'流浪地球', 'rls_date':'02  5 2019 12:00AM', 'mv_country':'中国', 'type':'科幻', 'year':'2019', 'box':'46.86'},
-        {'mv_id':'1004', 'mv_name':'复仇者联盟4', 'rls_date':'04 24 2019 12:00AM', 'mv_country':'美国', 'type':'科幻', 'year':'2019', 'box':'42.5'},
-        {'mv_id':'1005', 'mv_name':'红海行动', 'rls_date':'02 16 2018 12:00AM', 'mv_country':'中国', 'type':'战争', 'year':'2018', 'box':'36.5'},
-        {'mv_id':'1006', 'mv_name':'唐人街探案2', 'rls_date':'02 16 2018 12:00AM', 'mv_country':'中国', 'type':'喜剧', 'year':'2018', 'box':'33.97'},
-        {'mv_id':'1007', 'mv_name':'我不是药神', 'rls_date':'07  5 2018 12:00AM', 'mv_country':'中国', 'type':'喜剧', 'year':'2018', 'box':'31'},
-        {'mv_id':'1008', 'mv_name':'中国机长', 'rls_date':'09 30 2019 12:00AM', 'mv_country':'中国', 'type':'剧情', 'year':'2019', 'box':'29.12'},
-        {'mv_id':'1009', 'mv_name':'速度与激情8', 'rls_date':'04 14 2017 12:00AM', 'mv_country':'美国', 'type':'动作', 'year':'2017', 'box':'26.7'},
-        {'mv_id':'1010', 'mv_name':'西虹市首富', 'rls_date':'07 27 2018 12:00AM', 'mv_country':'中国', 'type':'喜剧', 'year':'2018', 'box':'25.47'},
-        {'mv_id':'1011', 'mv_name':'复仇者联盟3', 'rls_date':'05 11 2018 12:00AM', 'mv_country':'美国', 'type':'科幻', 'year':'2018', 'box':'23.9'},
-        {'mv_id':'1012', 'mv_name':'捉妖记2', 'rls_date':'02 16 2018 12:00AM', 'mv_country':'中国', 'type':'喜剧', 'year':'2018', 'box':'22.37'},
-        {'mv_id':'1013', 'mv_name':'八佰', 'rls_date':'08 21 2020 12:00AM', 'mv_country':'中国', 'type':'战争', 'year':'2020', 'box':'30.1'},
-        {'mv_id':'1014', 'mv_name':'姜子牙', 'rls_date':'10  1 2020 12:00AM', 'mv_country':'中国', 'type':'动画', 'year':'2020', 'box':'16.02'},
-        {'mv_id':'1015', 'mv_name':'我和我的家乡', 'rls_date':'10  1 2020 12:00AM', 'mv_country':'中国', 'type':'剧情', 'year':'2020', 'box':'28.29'},
-        {'mv_id':'1016', 'mv_name':'你好，李焕英', 'rls_date':'02 12 2021 12:00AM', 'mv_country':'中国', 'type':'喜剧', 'year':'2021', 'box':'54.13'},
-        {'mv_id':'1017', 'mv_name':'长津湖', 'rls_date':'09 30 2021 12:00AM', 'mv_country':'中国', 'type':'战争', 'year':'2021', 'box':'53.48'},
-        {'mv_id':'1018', 'mv_name':'速度与激情9', 'rls_date':'05 21 2021 12:00AM', 'mv_country':'中国', 'type':'动作', 'year':'2021', 'box':'13.92'}
+        {'mv_id':'1001', 'mv_name':'战狼2', 'rls_date':'07 27 2017 12:00AM', 'mv_country':'中国', 'type':'战争', 'year':'2017', 'box':'56.84', 'rate':'7.1'},
+        {'mv_id':'1002', 'mv_name':'哪吒之魔童降世', 'rls_date':'07 26 2019 12:00AM', 'mv_country':'中国', 'type':'动画', 'year':'2019', 'box':'50.15', 'rate':'8.4'},
+        {'mv_id':'1003', 'mv_name':'流浪地球', 'rls_date':'02  5 2019 12:00AM', 'mv_country':'中国', 'type':'科幻', 'year':'2019', 'box':'46.86', 'rate':'7.9'},
+        {'mv_id':'1004', 'mv_name':'复仇者联盟4', 'rls_date':'04 24 2019 12:00AM', 'mv_country':'美国', 'type':'科幻', 'year':'2019', 'box':'42.5', 'rate':'8.3'},
+        {'mv_id':'1005', 'mv_name':'红海行动', 'rls_date':'02 16 2018 12:00AM', 'mv_country':'中国', 'type':'战争', 'year':'2018', 'box':'36.5', 'rate':'8.2'},
+        {'mv_id':'1006', 'mv_name':'唐人街探案2', 'rls_date':'02 16 2018 12:00AM', 'mv_country':'中国', 'type':'喜剧', 'year':'2018', 'box':'33.97', 'rate': '6.6'},
+        {'mv_id':'1007', 'mv_name':'我不是药神', 'rls_date':'07  5 2018 12:00AM', 'mv_country':'中国', 'type':'喜剧', 'year':'2018', 'box':'31', 'rate': '9.0'},
+        {'mv_id':'1008', 'mv_name':'中国机长', 'rls_date':'09 30 2019 12:00AM', 'mv_country':'中国', 'type':'剧情', 'year':'2019', 'box':'29.12', 'rate':'6.6'},
+        {'mv_id':'1009', 'mv_name':'速度与激情8', 'rls_date':'04 14 2017 12:00AM', 'mv_country':'美国', 'type':'动作', 'year':'2017', 'box':'26.7', 'rate':'7.0'},
+        {'mv_id':'1010', 'mv_name':'西虹市首富', 'rls_date':'07 27 2018 12:00AM', 'mv_country':'中国', 'type':'喜剧', 'year':'2018', 'box':'25.47', 'rate':'6.6'},
+        {'mv_id':'1011', 'mv_name':'复仇者联盟3', 'rls_date':'05 11 2018 12:00AM', 'mv_country':'美国', 'type':'科幻', 'year':'2018', 'box':'23.9', 'rate':'8.1'},
+        {'mv_id':'1012', 'mv_name':'捉妖记2', 'rls_date':'02 16 2018 12:00AM', 'mv_country':'中国', 'type':'喜剧', 'year':'2018', 'box':'22.37', 'rate':'4.9'},
+        {'mv_id':'1013', 'mv_name':'八佰', 'rls_date':'08 21 2020 12:00AM', 'mv_country':'中国', 'type':'战争', 'year':'2020', 'box':'30.1', 'rate':'7.5'},
+        {'mv_id':'1014', 'mv_name':'姜子牙', 'rls_date':'10  1 2020 12:00AM', 'mv_country':'中国', 'type':'动画', 'year':'2020', 'box':'16.02', 'rate':'6.6'},
+        {'mv_id':'1015', 'mv_name':'我和我的家乡', 'rls_date':'10  1 2020 12:00AM', 'mv_country':'中国', 'type':'剧情', 'year':'2020', 'box':'28.29', 'rate':'7.0'},
+        {'mv_id':'1016', 'mv_name':'你好，李焕英', 'rls_date':'02 12 2021 12:00AM', 'mv_country':'中国', 'type':'喜剧', 'year':'2021', 'box':'54.13', 'rate':'7.7'},
+        {'mv_id':'1017', 'mv_name':'长津湖', 'rls_date':'09 30 2021 12:00AM', 'mv_country':'中国', 'type':'战争', 'year':'2021', 'box':'53.48', 'rate':'7.4'},
+        {'mv_id':'1018', 'mv_name':'速度与激情9', 'rls_date':'05 21 2021 12:00AM', 'mv_country':'中国', 'type':'动作', 'year':'2021', 'box':'13.92', 'rate':'5.1'}
     ]
     mv_act_relation = [
         {'id':'1', 'mv_id':'1001', 'act_id':'2001', 'relation_type':'主演'},
@@ -193,7 +193,7 @@ def drill_data():
         temp_act = Actor_info(act_id = a['act_id'], act_name = a['act_name'], gender = a['gender'], act_country = a['act_country'])
         movie_db.session.add(temp_act)
     for m in mv_info:
-        temp_mv = Movie_info(mv_id = m['mv_id'], mv_name = m['mv_name'], rls_date = m['rls_date'], mv_country = m['mv_country'], mv_type = m['type'], year = m['year'], mv_box = m['box'])
+        temp_mv = Movie_info(mv_id = m['mv_id'], mv_name = m['mv_name'], rls_date = m['rls_date'], mv_country = m['mv_country'], mv_type = m['type'], year = m['year'], mv_box = m['box'], online_rate = m['rate'])
         movie_db.session.add(temp_mv)
     for r in mv_act_relation:
         temp_relation = Mv_Act(id = r['id'], relation_type = r['relation_type'], act_id = r['act_id'], mv_id = r['mv_id'])
@@ -241,10 +241,17 @@ def search():
             Session = sessionmaker(bind=engine)
             session = Session()
             df_search_rst = pd.read_sql(temp_query.statement, session.bind) #将查询结果转化为数据框
+
             mv_name_list = df_search_rst['mv_name'].to_list()
             mv_box_list = list(map(float, df_search_rst['mv_box'].to_list()))
-            chart_data = {'labels': mv_name_list, 'data': mv_box_list}
-            return render_template('search_mv.html', rst_movies = search_rst, mv_data = chart_data)
+            line_data = {'labels': mv_name_list, 'data': mv_box_list}
+
+            type_box = df_search_rst.groupby('mv_type')['mv_box'].sum()
+            mv_type_list = type_box.index.tolist()
+            mv_type_box_list = type_box.values.tolist()
+            doughnut_data = {'labels': mv_type_list, 'data': mv_type_box_list}
+
+            return render_template('search_mv.html', rst_movies = search_rst, mv_line_data = line_data, mv_doughnut_data = doughnut_data)
         
         elif 'search_act' in request.form:
             act_id = request.form.get('act_id')

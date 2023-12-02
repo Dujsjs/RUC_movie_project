@@ -1,68 +1,72 @@
 {% extends 'mainpage_base.html' %}
 
     {% block 图片展示 %}
-    <style>
-      body {
-          margin: 0;
-          padding: 0;
-      }
-
-      .row {
-          height: 100vh; /* 100% 视窗高度 */
-      }
-
-      .column {
-          border: 1px solid #ddd; /* 可选：添加边框进行区分 */
-      }
-    </style>
-
-    <div class="row">
-      <div class="column small-4">
-        <h4>电影数据分析面板</h4>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <canvas id="barChart" width="400" height="200"></canvas>
-        <script>
-            var ctx = document.getElementById('barChart').getContext('2d');
-  
-            // 使用模板引擎获取后端传递的数据
-            var data = {
-                labels: {{ mv_data.labels | tojson | safe }},
-                datasets: [{
-                    label: 'Bar Chart Example',
-                    data: {{ mv_data.data | tojson | safe }},
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1
-                }]
-            };
-  
-            var options = {
-                scales: {
-                    x: { stacked: true },
-                    y: { stacked: true }
-                }
-            };
-  
-            var barChart = new Chart(ctx, {
-                type: 'bar',
-                data: data,
-                options: options
-            });
-        </script>
-      </div>
-
-      <div class="column small-4">
-          <!-- 第二列的内容 -->
-          <h2>Column 2</h2>
-      </div>
-
-      <div class="column small-4">
-        <!-- 第二列的内容 -->
-        <h2>Column 2</h2>
-    </div>
-
-    </div>
+    <script src="https://cdn.staticfile.org/foundation/5.5.3/js/vendor/modernizr.js"></script>
     
+    <div style="padding:20px;">
+      <ul class="large-block-grid-3">
+        <li> <!--分块1-->
+          <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+          <canvas id="doughnutChart" width="200" height="340"></canvas>
+          <script>
+              var ctx = document.getElementById('doughnutChart').getContext('2d');
+              // 使用模板引擎获取后端传递的数据
+              var doughnut_data = {
+                  labels: {{ mv_doughnut_data.labels | tojson | safe }},
+                  datasets: [{
+                      label: '票房',
+                      data: {{ mv_doughnut_data.data | tojson | safe }}
+                  }]
+              };
+    
+              var options = {
+                responsive: true,
+                maintainAspectRatio: false,
+              };
+    
+              var barChart = new Chart(ctx, {
+                  type: 'doughnut',
+                  data: doughnut_data,
+                  options: options
+              });
+          </script>  
+        </li>
+
+        <li> <!--分块2-->
+          <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+          <canvas id="barChart" width="200" height="360"></canvas>
+          <script>
+              var ctx = document.getElementById('barChart').getContext('2d');
+              // 使用模板引擎获取后端传递的数据
+              var bar_data = {
+                  labels: {{ mv_line_data.labels | tojson | safe }},
+                  datasets: [{
+                      label: '票房',
+                      data: {{ mv_line_data.data | tojson | safe }},
+                      borderColor: 'rgb(75, 192, 192)', // 设置线的颜色
+                      pointStyle: 'circle',     //设置点类型为圆点
+                      pointRadius: 6,    //设置圆点半径
+                      pointHoverRadius: 10, //设置鼠标移动上去后圆点半径
+                      tension: 0.1
+                  }]
+              };
+    
+              var options = {
+                responsive: true,
+                maintainAspectRatio: false,
+              };
+    
+              var barChart = new Chart(ctx, {
+                  type: 'line',
+                  data: bar_data,
+                  options: options
+              });
+          </script>  
+        </li>
+
+        <li><img src="https://img-blog.csdnimg.cn/7c1a173867c64b0b874649f2bd283243.png" alt="San Francisco"></li>
+      </ul>
+    </div>   
     {% endblock 图片展示 %}
 
     {% block 搜索结果 %}
@@ -77,6 +81,7 @@
         <p>电影发行国家: {{ movie.mv_country }}</p>
         <p>电影类型: {{ movie.mv_type }}</p>
         <p>电影票房: {{ movie.mv_box }}</p>
+        <p>网络评分: {{ movie.online_rate }}</p>
         <p>参演人员: 
           {% for act in relate_act %}
             {{ act.act_name }}

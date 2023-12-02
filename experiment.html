@@ -1,49 +1,85 @@
-<!-- 引入 Foundation CSS 和 JavaScript -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.7.3/css/foundation.min.css" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.7.3/js/vendor/jquery.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.7.3/js/vendor/what-input.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.7.3/js/foundation.min.js"></script>
 
-<!-- 引入 Chart.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
-<canvas id="myChart" width="400" height="200"></canvas>
-<script>
-  // 获取 Canvas 元素的上下文
-  var ctx = document.getElementById('myChart').getContext('2d');
+<!DOCTYPE html>
+<!--[if IE 9]><html class="lt-ie10" lang="en" > <![endif]-->
+<html class="no-js" lang="en" >
 
-  // 创建图表
-  var myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-      datasets: [{
-        label: '# of Votes',
-        data: [12, 19, 3, 5, 2, 3],
-        backgroundColor: [
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(255, 206, 86, 0.2)',
-          'rgba(75, 192, 192, 0.2)',
-          'rgba(153, 102, 255, 0.2)',
-          'rgba(255, 159, 64, 0.2)'
-        ],
-        borderColor: [
-          'rgba(255, 99, 132, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
-          'rgba(255, 159, 64, 1)'
-        ],
-        borderWidth: 1
-      }]
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true
-        }
-      }
-    }
-  });
-</script>
+  <head>
+    <meta charset="utf-8">
+    <!-- If you delete this meta tag World War Z will become a reality -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foundation 5</title>
+
+    <!-- If you are using the CSS version, only link these 2 files, you may add app.css to use for your overrides if you like -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.3/css/normalize.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.3/css/foundation.min.css">
+
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/foundicons/3.0.0/foundation-icons.css' rel='stylesheet' type='text/css'>
+      <!-- optional CDN for Foundation Icons ^^ -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+
+  </head>
+  <body>
+    <br>
+    <div class="row">
+      <div class="medium-3 large-3 text-center columns">
+        <img src="https://placehold.it/150x150&text=[things]">
+          <h4>Title of Content</h4>
+          <p>Bacon ipsum dolor sit amet nulla ham qui sint exercitation eiusmod commodo, chuck duis velit.</p>
+      </div>
+      <div class="medium-3 large-3 text-center column">
+        <img src="https://placehold.it/150x150&text=[things]">
+          <h4>Title of Content</h4>
+          <p>Bacon ipsum dolor sit amet nulla ham qui sint exercitation eiusmod commodo, chuck duis velit.</p>
+      </div>
+      <div class="medium-3 large-3 text-center column">
+        <img src="https://placehold.it/150x150&text=[things]">
+          <h4>Title of Content</h4>
+          <p>Bacon ipsum dolor sit amet nulla ham qui sint exercitation eiusmod commodo, chuck duis velit.</p>
+      </div>
+      <div class="medium-3 large-3 text-center column">
+        <img src="https://placehold.it/150x150&text=[things]">
+          <h4>Title of Content</h4>
+          <p>Bacon ipsum dolor sit amet nulla ham qui sint exercitation eiusmod commodo, chuck duis velit.</p>
+      </div>
+    </div>
+
+    <ul class="example-orbit-content" data-orbit>
+      <li data-orbit-slide="headline-1">
+        <div class="text-center panel">
+          <h2>Headline 1</h2>
+          <h3>Subheadline</h3>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eos animi, nobis illo. Repellendus atque dolorem, officia recusandae autem, laudantium consectetur, neque!</p>
+        </div>
+      </li>
+      <li data-orbit-slide="headline-2">
+        <div class="text-center panel">
+          <h2>Headline 2</h2>
+          <h3>Subheadline</h3>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eos animi, nobis illo. Repellendus atque dolorem, officia recusandae autem, laudantium consectetur, neque!</p>
+        </div>
+      </li>
+      <li data-orbit-slide="headline-3">
+        <div class="text-center panel">
+          <h2>Headline 3</h2>
+          <h3>Subheadline</h3>
+          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eos animi, nobis illo. Repellendus atque dolorem, officia recusandae autem, laudantium consectetur, neque!</p>
+        </div>
+      </li>
+    </ul>
+
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.3/js/foundation.min.js"></script>
+    <script>
+      $(document).foundation();
+    </script>
+
+<script>//<![CDATA[
+document.write('<script src="https://' + (location.hostname || 'localhost') + ':35729/livereload.js?snipver=1"><\/script>')
+//]]></script>
+</body>
+</html>
+
+
+
+
