@@ -5,7 +5,7 @@
     
     <div style="padding:20px;">
       <ul class="large-block-grid-3">
-        <li> <!--分块1-->
+        <li> <!--环形图-->
           <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
           <canvas id="doughnutChart" width="200" height="340"></canvas>
           <script>
@@ -14,7 +14,7 @@
               var doughnut_data = {
                   labels: {{ mv_doughnut_data.labels | tojson | safe }},
                   datasets: [{
-                      label: '票房',
+                      label: {{ mv_doughnut_data.labels | tojson | safe }},
                       data: {{ mv_doughnut_data.data | tojson | safe }}
                   }]
               };
@@ -24,7 +24,7 @@
                 maintainAspectRatio: false,
               };
     
-              var barChart = new Chart(ctx, {
+              var doughnutChart = new Chart(ctx, {
                   type: 'doughnut',
                   data: doughnut_data,
                   options: options
@@ -32,13 +32,13 @@
           </script>  
         </li>
 
-        <li> <!--分块2-->
+        <li> <!--折线图-->
           <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-          <canvas id="barChart" width="200" height="360"></canvas>
+          <canvas id="lineChart" width="200" height="360"></canvas>
           <script>
-              var ctx = document.getElementById('barChart').getContext('2d');
+              var ctx = document.getElementById('lineChart').getContext('2d');
               // 使用模板引擎获取后端传递的数据
-              var bar_data = {
+              var line_data = {
                   labels: {{ mv_line_data.labels | tojson | safe }},
                   datasets: [{
                       label: '票房',
@@ -58,13 +58,35 @@
     
               var barChart = new Chart(ctx, {
                   type: 'line',
-                  data: bar_data,
+                  data: line_data,
                   options: options
               });
           </script>  
         </li>
 
-        <li><img src="https://img-blog.csdnimg.cn/7c1a173867c64b0b874649f2bd283243.png" alt="San Francisco"></li>
+        <li><!--雷达图-->
+          <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+          <canvas id="radarChart" width="200" height="390"></canvas>
+          <script>
+              var ctx = document.getElementById('radarChart').getContext('2d');
+              // 使用模板引擎获取后端传递的数据
+              var radar_data = {
+                labels: {{ mv_radar_data.labels | tojson | safe }},
+                datasets: {{ mv_radar_data.datasets | tojson | safe }}
+              };
+    
+              var options = {
+                responsive: true,
+                maintainAspectRatio: false,
+              };
+    
+              var radarChart = new Chart(ctx, {
+                  type: 'radar',
+                  data: radar_data,
+                  options: options
+              });
+          </script>
+        </li>
       </ul>
     </div>   
     {% endblock 图片展示 %}
