@@ -1,94 +1,147 @@
 {% extends 'mainpage_base.html' %}
 
     {% block 图片展示 %}
+    <head>
+      <style>
+          .image-limit 
+          {
+              max-width: 390px;
+              max-height: 260px;
+          }
+      </style>
+    </head>
     <script src="https://cdn.staticfile.org/foundation/5.5.3/js/vendor/modernizr.js"></script>
-    
-    <div style="padding:20px;">
-      <ul class="large-block-grid-3">
-        <li> <!--环形图-->
-          <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-          <canvas id="doughnutChart" width="200" height="340"></canvas>
-          <script>
-              var ctx = document.getElementById('doughnutChart').getContext('2d');
-              // 使用模板引擎获取后端传递的数据
-              var doughnut_data = {
-                  labels: {{ mv_doughnut_data.labels | tojson | safe }},
-                  datasets: [{
-                      label: {{ mv_doughnut_data.labels | tojson | safe }},
-                      data: {{ mv_doughnut_data.data | tojson | safe }}
-                  }]
-              };
-    
-              var options = {
-                responsive: true,
-                maintainAspectRatio: false,
-              };
-    
-              var doughnutChart = new Chart(ctx, {
-                  type: 'doughnut',
-                  data: doughnut_data,
-                  options: options
-              });
-          </script>  
-        </li>
 
-        <li> <!--折线图-->
-          <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-          <canvas id="lineChart" width="200" height="360"></canvas>
-          <script>
-              var ctx = document.getElementById('lineChart').getContext('2d');
-              // 使用模板引擎获取后端传递的数据
-              var line_data = {
-                  labels: {{ mv_line_data.labels | tojson | safe }},
-                  datasets: [{
-                      label: '票房',
-                      data: {{ mv_line_data.data | tojson | safe }},
-                      borderColor: 'rgb(75, 192, 192)', // 设置线的颜色
-                      pointStyle: 'circle',     //设置点类型为圆点
-                      pointRadius: 6,    //设置圆点半径
-                      pointHoverRadius: 10, //设置鼠标移动上去后圆点半径
-                      tension: 0.1
-                  }]
-              };
-    
-              var options = {
-                responsive: true,
-                maintainAspectRatio: false,
-              };
-    
-              var barChart = new Chart(ctx, {
-                  type: 'line',
-                  data: line_data,
-                  options: options
-              });
-          </script>  
-        </li>
+    <ul class="example-orbit" data-orbit>
+      <li>
+        <div class="orbit-caption">
+          数据分析面板
+        </div>
 
-        <li><!--雷达图-->
-          <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-          <canvas id="radarChart" width="200" height="390"></canvas>
-          <script>
-              var ctx = document.getElementById('radarChart').getContext('2d');
-              // 使用模板引擎获取后端传递的数据
-              var radar_data = {
-                labels: {{ mv_radar_data.labels | tojson | safe }},
-                datasets: {{ mv_radar_data.datasets | tojson | safe }}
-              };
+        <div style="padding:20px;">
+          <ul class="large-block-grid-3">
+            <li> <!--环形图-->
+              <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+              <canvas id="doughnutChart" width="200" height="340"></canvas>
+              <script>
+                  var ctx = document.getElementById('doughnutChart').getContext('2d');
+                  // 使用模板引擎获取后端传递的数据
+                  var doughnut_data = {
+                      labels: {{ mv_doughnut_data.labels | tojson | safe }},
+                      datasets: [{
+                          label: {{ mv_doughnut_data.labels | tojson | safe }},
+                          data: {{ mv_doughnut_data.data | tojson | safe }}
+                      }]
+                  };
+        
+                  var options = {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                  };
+        
+                  var doughnutChart = new Chart(ctx, {
+                      type: 'doughnut',
+                      data: doughnut_data,
+                      options: options
+                  });
+              </script>  
+            </li>
     
-              var options = {
-                responsive: true,
-                maintainAspectRatio: false,
-              };
+            <li> <!--折线图-->
+              <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+              <canvas id="lineChart" width="200" height="360"></canvas>
+              <script>
+                  var ctx = document.getElementById('lineChart').getContext('2d');
+                  // 使用模板引擎获取后端传递的数据
+                  var line_data = {
+                      labels: {{ mv_line_data.labels | tojson | safe }},
+                      datasets: [{
+                          label: '票房',
+                          data: {{ mv_line_data.data | tojson | safe }},
+                          borderColor: 'rgb(75, 192, 192)', // 设置线的颜色
+                          pointStyle: 'circle',     //设置点类型为圆点
+                          pointRadius: 6,    //设置圆点半径
+                          pointHoverRadius: 10, //设置鼠标移动上去后圆点半径
+                          tension: 0.1
+                      }]
+                  };
+        
+                  var options = {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                  };
+        
+                  var barChart = new Chart(ctx, {
+                      type: 'line',
+                      data: line_data,
+                      options: options
+                  });
+              </script>
+            </li>
     
-              var radarChart = new Chart(ctx, {
-                  type: 'radar',
-                  data: radar_data,
-                  options: options
-              });
-          </script>
-        </li>
-      </ul>
-    </div>   
+            <li><!--雷达图-->
+              <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+              <canvas id="radarChart" width="200" height="360"></canvas>
+              <script>
+                  var ctx = document.getElementById('radarChart').getContext('2d');
+                  // 使用模板引擎获取后端传递的数据
+                  var radar_data = {
+                    labels: {{ mv_radar_data.labels | tojson | safe }},
+                    datasets: {{ mv_radar_data.datasets | tojson | safe }}
+                  };
+        
+                  var options = {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                  };
+        
+                  var radarChart = new Chart(ctx, {
+                      type: 'radar',
+                      data: radar_data,
+                      options: options
+                  });
+              </script>
+            </li>
+          </ul>
+        </div>
+        <br>
+        <br>
+        <br>
+      </li>
+
+      <li>
+        <div class="orbit-caption">
+          票房预测工具
+        </div>
+
+        <div style="padding:40px;">
+          <ul class="large-block-grid-2">
+            <li>
+              <h3>请输入待预测票房电影的必要信息：</h3>
+              <form action="/box_predict" method="post">
+                  <label for="x1">影片时长:</label>
+                  <input type="text" name="duration" required>
+                  <label for="x2">评论数量:</label>
+                  <input type="text" name="comments_num" required>
+                  <label for="x3">获奖数量:</label>
+                  <input type="text" name="prize_num" required>
+                  <label for="x3">网络评分(或您的个人评分):</label>
+                  <input type="text" name="online_rate" required>
+                  <input type="submit" value="提交">
+              </form>
+            </li>
+              
+            <li>
+              <h3>预测结果</h3>
+              <p>预计票房为: {{ prediction }}</p>
+              <img class="image-limit" src="{{ img_url }}" alt="Regression Plot">
+            </li>
+          </ul>
+          <br>
+        </div>
+      </li>
+
+    </ul>
     {% endblock 图片展示 %}
 
     {% block 搜索结果 %}
@@ -105,6 +158,8 @@
         <p>电影类型: {{ movie.mv_type }}</p>
         <p>电影票房: {{ movie.mv_box }}</p>
         <p>网络评分: {{ movie.online_rate }}</p>
+        <p>评论数量: {{ movie.comments_num }}</p>
+        <p>影片时长: {{ movie.duration }}</p>
         <p>参演人员: 
           {% for act in relate_act %}
             {{ act.act_name }}
