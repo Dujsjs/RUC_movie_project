@@ -7,7 +7,7 @@ from flask import request, url_for, redirect, flash
 # from wtforms.validators import DataRequired, Length
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, func
 from sqlalchemy.orm import joinedload, sessionmaker
 import pandas as pd
 import numpy as np
@@ -36,7 +36,7 @@ movie_db = SQLAlchemy(app)
 
 #创建模型类
 class Movie_info(movie_db.Model):
-    mv_id = movie_db.Column(movie_db.String(10), nullable = False, primary_key=True)
+    mv_id = movie_db.Column(movie_db.Integer, nullable = False, primary_key=True)
     mv_name = movie_db.Column(movie_db.String(20), nullable = False)
     rls_date = movie_db.Column(movie_db.String(20))
     mv_country = movie_db.Column(movie_db.String(20))
@@ -49,7 +49,7 @@ class Movie_info(movie_db.Model):
     duration = movie_db.Column(movie_db.Float) #影片时长
 
 class Actor_info(movie_db.Model):
-    act_id = movie_db.Column(movie_db.String(10), nullable = False, primary_key=True)
+    act_id = movie_db.Column(movie_db.Integer, nullable = False, primary_key=True)
     act_name = movie_db.Column(movie_db.String(20), nullable = False)
     gender = movie_db.Column(movie_db.String(10))
     act_country = movie_db.Column(movie_db.String(20))
@@ -59,20 +59,20 @@ class User_info(movie_db.Model):
     tag = movie_db.Column(movie_db.String(40)) #用不多于20个字描述一下自己
 
 class Mv_Act(movie_db.Model):
-    id = movie_db.Column(movie_db.String(10), nullable = False, primary_key=True)
+    id = movie_db.Column(movie_db.Integer, nullable = False, primary_key=True)
     relation_type = movie_db.Column(movie_db.String(10), nullable = False) #只允许填写主演、导演
-    act_id = movie_db.Column(movie_db.String(10), nullable = False)
-    mv_id = movie_db.Column(movie_db.String(10), nullable = False)
+    act_id = movie_db.Column(movie_db.Integer, nullable = False)
+    mv_id = movie_db.Column(movie_db.Integer, nullable = False)
     
 class Mv_User():
     mv_rate= movie_db.Column(movie_db.Float, nullable = False, primary_key=True)  #用户在系统中的评分
     username = movie_db.Column(movie_db.String(10), nullable = False)
-    mv_id = movie_db.Column(movie_db.String(10), nullable = False)
+    mv_id = movie_db.Column(movie_db.Integer, nullable = False)
 
 class Act_User():
     act_rate = movie_db.Column(movie_db.Float, nullable = False, primary_key=True) #用户在系统中的评分
     username = movie_db.Column(movie_db.String(10), nullable = False)
-    act_id = movie_db.Column(movie_db.String(10), nullable = False)
+    act_id = movie_db.Column(movie_db.Integer, nullable = False)
 
 #以下为相关装饰器及其对应函数：
 @app.cli.command('drill_data')
@@ -302,30 +302,104 @@ def search():
 @app.route('/admin', methods = ['GET', 'POST']) #编辑信息装饰器
 def demo():
     if request.method == 'GET':
-        search_rst = Movie_info.query.all() #未提交表单，则仅仅渲染页面
-        print(search_rst)
-        return render_template('admin_page.html', rst_movies = search_rst)
+        return render_template('admin_page.html') #未提交表单，则仅仅渲染页面
+
+@app.route('/admin_mv_page', methods = ['GET'])
+def demo_mv():
+    rst = Movie_info.query.all()
+    return render_template('admin_mv_page.html', rst_movies = rst)
+
+@app.route('/admin_act_page', methods = ['GET'])
+def demo_act():
+    rst = Actor_info.query.all()
+    return render_template('admin_act_page.html', rst_actors = rst)
+
+@app.route('/admin_add_mv', methods = ['GET', 'POST'])
+def add_mv():
     if request.method == 'POST':
-        search_rst = Movie_info.query.all() #提交了表单，首先保证仍然显示所有电影信息
-
         new_data = request.get_json() #以嵌套字典的形式返回输入值
-
-        temp_mv_info = Movie_info(mv_id = new_data['form1']['mv_id'], mv_name = new_data['form1']['mv_name'], rls_date = new_data['form1']['date'], mv_country = new_data['form1']['mv_country'], mv_type = new_data['form1']['mv_type'], year = (new_data['form1']['date'])[-4:], mv_box = new_data['form1']['box']) #更新电影表信息
+        mv_id_max = movie_db.session.query(func.max(Movie_info.mv_id)).scalar()
+        temp_mv_info = Movie_info(mv_id = mv_id_max + 1, mv_name = new_data['form1']['mv_name'], rls_date = new_data['form1']['date'], mv_country = new_data['form1']['mv_country'], mv_type = new_data['form1']['mv_type'], year = (new_data['form1']['date'])[-4:], mv_box = new_data['form1']['box'], online_rate = new_data['form1']['online_rate'], prize_num = new_data['form1']['prize_num'], comments_num = new_data['form1']['comments_num'], duration = new_data['form1']['duration']) #更新电影表信息
         movie_db.session.add(temp_mv_info)
 
         all_act_form = list(new_data.keys())
         del all_act_form[0]
         for form_name in all_act_form:
-            temp_act_info = Actor_info(act_id = new_data[form_name]['act_id'], act_name = new_data[form_name]['act_name'], gender = new_data[form_name]['gender'], act_country = new_data[form_name]['country']) #更新演员表信息
-            id_list = Mv_Act.query.with_entities(Mv_Act.id).all() #查找当前的id编号
-            max_id_current = max(list(map(int, id_list))) #找出最大值，加1即可实现自动编号
-            temp_act_mv_relation = Mv_Act(id = str(max_id_current + 1), relation_type = new_data[form_name]['act_relation'], act_id = new_data[form_name]['act_id'], mv_id = new_data['form1']['mv_id']) #更新关系表信息
+            act_id_max = movie_db.session.query(func.max(Actor_info.act_id)).scalar()
+            temp_act_info = Actor_info(act_id = act_id_max + 1, act_name = new_data[form_name]['act_name'], gender = new_data[form_name]['gender'], act_country = new_data[form_name]['country']) #更新演员表信息
+            id_max = movie_db.session.query(func.max(Mv_Act.id)).scalar() #查找当前的id编号
+            temp_act_mv_relation = Mv_Act(id = str(id_max + 1), relation_type = new_data[form_name]['act_relation'], act_id = act_id_max + 1, mv_id = mv_id_max + 1) #更新关系表信息
             movie_db.session.add(temp_act_info)
             movie_db.session.add(temp_act_mv_relation)
 
         movie_db.session.commit() #最终全部提交
-        return render_template('admin_page.html', rst_movies = search_rst)
+        search_rst = Movie_info.query.all() #提交了表单，首先保证仍然显示所有电影信息
+        return render_template('admin_mv_page.html', rst_movies = search_rst)
 
+@app.route('/admin_modify_mv', methods = ['GET', 'POST'])
+def modify_mv():
+    if request.method == 'POST':
+        rst = Movie_info.query.get_or_404(request.form['mv_id']) #仍然显示所有电影信息
+        rst.mv_name = request.form['mv_name']
+        rst.rls_date = request.form['mv_rls_date']
+        rst.mv_country  = request.form['mv_country']
+        rst.mv_type = request.form['mv_type']
+        rst.mv_box = request.form['mv_box']
+        rst.online_rate = request.form['online_rate']
+        rst.comments_num = request.form['comments_num']
+        rst.duration = request.form['duration']
+        movie_db.session.commit()
+
+        all_rst = Movie_info.query.all()
+        return render_template('admin_mv_page.html', rst_movies = all_rst)
+
+@app.route('/admin_delete_mv', methods = ['GET', 'POST'])
+def delete_mv():
+    if request.method == 'POST':
+        movie = Movie_info.query.get_or_404(request.form['mv_id'])
+        movie_db.session.delete(movie)
+        Mv_Act.query.filter(Mv_Act.mv_id == request.form['mv_id']).delete() #注意，这里只删除关系信息，而不删除演员信息，要想删除演员信息，可单独删除演员
+        movie_db.session.commit()
+
+        all_rst = Movie_info.query.all()
+        return render_template('admin_mv_page.html', rst_movies = all_rst)
+    
+@app.route('/admin_add_act', methods = ['GET', 'POST'])
+def add_act():
+    if request.method == 'POST':
+        new_data = request.get_json() #以嵌套字典的形式返回输入值
+
+        all_act_form = list(new_data.keys())
+        for form_name in all_act_form:
+            act_id_max = movie_db.session.query(func.max(Actor_info.act_id)).scalar()
+            temp_act_info = Actor_info(act_id = act_id_max + 1, act_name = new_data[form_name]['act_name'], gender = new_data[form_name]['gender'], act_country = new_data[form_name]['country']) #更新演员表信息
+            movie_db.session.add(temp_act_info)
+
+        movie_db.session.commit() #最终全部提交
+        search_rst = Actor_info.query.all() #提交了表单，首先保证仍然显示所有电影信息
+        return render_template('admin_act_page.html', rst_actors = search_rst)
+
+@app.route('/admin_modify_act', methods = ['GET', 'POST'])
+def modify_act():
+    if request.method == 'POST':
+        rst = Actor_info.query.get_or_404(request.form['act_id']) #仍然显示所有电影信息
+        rst.act_name = request.form['act_name']
+        rst.gender = request.form['gender']
+        rst.act_country  = request.form['act_country']
+        movie_db.session.commit()
+
+        all_rst = Actor_info.query.all()
+        return render_template('admin_act_page.html', rst_actors = all_rst)
+
+@app.route('/admin_delete_act', methods = ['GET', 'POST'])
+def delete_act():
+    if request.method == 'POST':
+        act = Actor_info.query.get_or_404(request.form['act_id'])
+        movie_db.session.delete(act)
+        movie_db.session.commit()
+
+        all_rst = Actor_info.query.all()
+        return render_template('admin_act_page.html', rst_actors = all_rst)
     
 @app.route('/box_predict', methods = ['GET', 'POST'])
 def predict():

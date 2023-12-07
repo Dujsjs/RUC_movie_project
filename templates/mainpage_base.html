@@ -41,7 +41,7 @@
 
           <ul class="left">
             <li class="divider"></li> <!--纵向分隔线-->
-            <li><a href="#">主页</a></li>
+            <li><a href="#" onclick="redirectToAnotherPage()">主页</a></li>
             <li class="divider"></li><!--纵向分隔线-->
             <li><a href="#">Main Item 2</a></li>
             <li class="divider"></li><!--纵向分隔线-->
@@ -215,6 +215,12 @@
     <script>
       $(document).foundation();
     </script>
+        <script>
+          function redirectToAnotherPage() 
+          {
+              window.location.href = '/'; //这里写装饰器函数的URL
+          }
+      </script>
 
   </body>
   <!--主体部分结束-->

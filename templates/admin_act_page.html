@@ -1,0 +1,300 @@
+{% extends 'mainpage_base.html' %}
+
+{% block 图片展示 %} <!--这里在管理员界面用于编辑、添加、删除数据-->
+<div style="padding: 20px;">
+    <p>数据功能区</p>
+    <ul class="button-group radius">
+      <li><button type="button" class="button" data-reveal-id="add_info">添加</button></li>
+      <li><button type="button" class="button">批量删除</button></li>
+    </ul>
+
+    <div id="add_info" class="reveal-modal" data-reveal>
+        <div id="formContainer">
+            <fieldset>
+                <legend>演员 1 (可点击“增加演员”按钮加入多位演员)</legend>
+                <div class="form-group">
+                    <form class="act_Form" method="post">
+                        <div class="row" id="formItems2">
+                            <div class="small-12 columns form-item">
+                                <!-- 请输入演员ID
+                                <input type="text" name = "act_id"> -->
+                                请输入演员姓名
+                                <input type="text" name = "act_name" required>
+                                请选择演员性别
+                                <select name = "gender">
+                                    <option>暂无</option>
+                                    <option>男</option>
+                                    <option>女</option>
+                                </select>
+                                请输入演员国籍
+                                <input type="text" name = "country" value = "中国" required>
+                                请选择演员身份
+                                <select name = "act_relation">
+                                    <option>暂无</option>
+                                    <option>主演</option>
+                                    <option>导演</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </fieldset>
+        </div>
+        
+        <div class="row">
+            <div class="small-12 columns">
+                <button type="button" onclick="addForm()">增加演员</button>
+                <button type="button" onclick="deleteForm()">删除演员</button>
+            </div>
+        </div>
+
+        <button onclick="gatherAndSubmitFormData()">确认添加</button>
+
+        <a class="close-reveal-modal">&times;</a>  <!--这是关闭窗口的按钮-->
+    </div>
+</div>
+
+
+<script>
+    var formCount = 1;
+
+    function addForm() 
+    {
+        formCount++;
+        var formContainer = document.getElementById('formContainer');
+
+        var actFormGroup = document.createElement('div');
+        actFormGroup.className = 'form-group';
+
+        var actForm = document.createElement('form');
+        actForm.className = 'act_Form';
+        actForm.method = 'POST'
+
+        var actFormItems = document.createElement('div');
+        actFormItems.className = 'row';
+        actFormItems.id = 'actor_Form_Con ' + formCount;
+
+        var actItem = document.createElement('div');
+        actItem.className = 'small-12 columns form-item';
+
+        var actLegend = document.createElement('legend');
+        actLegend.textContent = '演员 ' + formCount;
+
+        var backspace = document.createElement('br'); //回车符
+
+        var act_fieldset = document.createElement('fieldset'); //添加分隔框
+
+        var nameLabel = document.createElement('label');
+        nameLabel.setAttribute('for', 'act_name');
+        nameLabel.textContent = '请输入演员姓名 ';
+        var nameInput = document.createElement('input');
+        nameInput.setAttribute('type', 'text');
+        nameInput.setAttribute('id', 'act_name');
+        nameInput.setAttribute('name', 'act_name');
+        nameInput.required = true
+        actItem.appendChild(nameLabel);   //将标签和输入框添加到表单项元素中
+        actItem.appendChild(nameInput);
+        actItem.appendChild(backspace);
+
+        var gender = document.createElement('label');
+        gender.setAttribute('for', 'gender');
+        gender.textContent = '请选择演员性别 '
+        var genderSelect = document.createElement('select');
+        genderSelect.setAttribute('id', 'gender');
+        genderSelect.setAttribute('name', 'gender');
+        var gender1 = document.createElement('option');
+        gender1.setAttribute('value', '暂无');
+        gender1.textContent = '暂无';
+        var gender2 = document.createElement('option');
+        gender2.setAttribute('value', '男');
+        gender2.textContent = '男';
+        var gender3 = document.createElement('option');
+        gender3.setAttribute('value', '女');
+        gender3.textContent = '女';
+        genderSelect.appendChild(gender1);
+        genderSelect.appendChild(gender2);
+        genderSelect.appendChild(gender3);
+        actItem.appendChild(gender)
+        actItem.appendChild(genderSelect);
+        actItem.appendChild(backspace);
+
+        var country = document.createElement('label');
+        country.setAttribute('for', 'country');
+        country.textContent = '请输入演员国籍 '
+        var countryInput = document.createElement('input');
+        countryInput.setAttribute('type', 'text');
+        countryInput.setAttribute('id', 'country');
+        countryInput.setAttribute('name', 'country');
+        countryInput.setAttribute('value', '中国')
+        countryInput.required = true
+		actItem.appendChild(country);   //将标签和输入框添加到表单项元素中
+        actItem.appendChild(countryInput);
+        actItem.appendChild(backspace);
+
+        var relation = document.createElement('label');
+        relation.setAttribute('for', 'act_relation');
+        relation.textContent = '请选择演员身份 '
+        var relationSelect = document.createElement('select');
+        relationSelect.setAttribute('id', 'act_relation');
+        relationSelect.setAttribute('name', 'act_relation');
+        var relation0 = document.createElement('option');
+        relation0.setAttribute('value', '暂无');
+        relation0.textContent = '暂无';
+        var relation1 = document.createElement('option');
+        relation1.setAttribute('value', '主演');
+        relation1.textContent = '主演';
+        var relation2 = document.createElement('option');
+        relation2.setAttribute('value', '导演');
+        relation2.textContent = '导演';
+        relationSelect.appendChild(relation0);
+        relationSelect.appendChild(relation1);
+        relationSelect.appendChild(relation2);
+        actItem.appendChild(relation)
+        actItem.appendChild(relationSelect);
+        actItem.appendChild(backspace);
+
+        actFormItems.appendChild(actItem);  //将表单项添加到表单项容器中
+        actForm.appendChild(actFormItems);  //将表单项容器添加到表单中
+        act_fieldset.appendChild(actLegend);
+        act_fieldset.appendChild(actForm);
+        actFormGroup.appendChild(act_fieldset);
+        formContainer.appendChild(actFormGroup);  //将新的表单组添加到表单容器中
+    }
+
+    function deleteForm() 
+    {
+        var formContainer = document.getElementById('formContainer');
+        var formGroups = formContainer.getElementsByClassName('form-group');
+        if (formGroups.length > 2) 
+        {
+            formGroups[formGroups.length - 1].remove();
+        }
+        if (formCount > 1)
+        {
+            formCount--;
+        }
+    }
+
+    function gatherAndSubmitFormData() 
+    {
+        var formContainer = document.getElementById('formContainer');
+        var forms = formContainer.querySelectorAll('form');
+
+        var formData = {};
+
+        for (var i = 0; i < forms.length; i++) 
+        {
+            var form = forms[i];
+            var formFields = {};
+
+            var inputs = form.querySelectorAll('input, select');  // 检查表单中的输入元素是否为空
+            for (var j = 0; j < inputs.length; j++) {
+                var input = inputs[j];
+                if (input.required && input.value.trim() === '') {
+                    alert('请填写所有必填字段！');
+                    return; // 如果有任何一个字段为空，停止执行下方的数据添加功能
+                }
+                formFields[input.name] = input.value;
+            }
+
+            formData['form' + (i + 1)] = formFields;
+        }
+
+        //如果所有字段都非空再提交
+        fetch('/admin', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+</script>
+{% endblock 图片展示 %}
+
+
+{% block 搜索结果 %} <!--跳过搜索，直接展示所有电影数据信息-->
+<style>
+    .button-container 
+    {
+    text-align: right;
+    margin-top: 10px; /* 根据需要调整间距 */
+    }
+</style>
+
+<div style="padding:20px;">
+    {% for actor in rst_actors %}
+        <div class="panel radius">
+            <h3>{{ actor.act_name }}</h3>
+            <br>
+            <p>演员编号: {{ actor.act_id }}</p>
+            <p>演员性别: {{ actor.gender }}</p>
+            <p>演员国籍: {{ actor.act_country }}</p>
+            <p>参演过的电影: 
+            {% for mv in relate_mv %}
+                {{ mv.act_name }}
+            {% endfor %}
+            </p>
+
+            <div class="button-container">
+                <button type="button" class="button round" data-reveal-id="edit_{{ loop.index }}">编辑</button>
+                <button type="button" class="button round" data-reveal-id="delete_{{ loop.index }}">删除</button>
+            </div>
+
+            <div id="delete_{{ loop.index }}" class="reveal-modal medium" data-reveal>
+                <form class="act_delete_Form" action="/admin_delete_act" method="post">
+                    <br>
+                    <div data-alert class="alert-box warning">
+                        <strong>请注意：</strong>您真的要删除此位演员吗？
+                        <a href="#" class="close">&times;</a>
+                    </div>
+
+                    <label for="act_id">要删除的演员ID：</label>
+                    <input type="text" id="act_id" name="act_id" value="{{ actor.act_id }}" readonly><br>
+
+                    <label for="act_name">要删除的演员姓名：</label>
+                    <input type="text" id="act_name" name="act_name" value="{{ actor.act_name }}" readonly><br>
+                    <input class="button" type = "submit" name = "delete" value="确认删除">
+                    <a class="close-reveal-modal">&times;</a>  <!--这是关闭窗口的按钮-->
+                </form>
+            </div>
+
+            <div id="edit_{{ loop.index }}" class="reveal-modal large" data-reveal> <!--易错！这里一定要循环设置id用于辨别不同的模态框-->
+                <br>
+                <fieldset>
+                    <div data-alert class="alert-box warning">
+                        <strong>请注意：</strong>若要修改电影，请前往电影修改界面！
+                        <a href="#" class="close">&times;</a>
+                    </div>
+
+                    <legend>请输入修改后的演员信息</legend>
+                    <form class="act_edit_Form" action="/admin_modify_act" method="post">
+                        <label for="act_id">演员ID：(不可人为修改！)</label>
+                        <input type="text" id="act_id" name="act_id" value="{{ actor.act_id }}" readonly required><br>
+
+                        <label for="act_name">演员姓名：</label>
+                        <input type="text" id="act_name" name="act_name" value="{{ actor.act_name }}" required><br>
+
+                        <label for="gender">演员性别：</label>
+                        <input type="text" id="gender" name="gender" value="{{ actor.gender }}" required><br>
+
+                        <label for="act_country">国籍：</label>
+                        <input type="text" id="act_country" name="act_country" value="{{ actor.act_country }}" required><br>
+
+                        <input class="button" type = "submit" name = "modify" value="确认修改">
+                    </form>
+                </fieldset>
+                <a class="close-reveal-modal">&times;</a>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock 搜索结果 %} 
