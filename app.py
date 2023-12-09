@@ -9,18 +9,20 @@ from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine, func
 from sqlalchemy.orm import joinedload, sessionmaker
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user
 import pandas as pd
 import numpy as np
 from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
-
 import os
 import sys
 import click
 
 app = Flask(__name__)
+login_manager = LoginManager(app) #实例化登陆类
 
 #初始化数据库
 WIN = sys.platform.startswith('win')
@@ -54,9 +56,22 @@ class Actor_info(movie_db.Model):
     gender = movie_db.Column(movie_db.String(10))
     act_country = movie_db.Column(movie_db.String(20))
 
-class User_info(movie_db.Model):
-    username = movie_db.Column(movie_db.String(10), nullable = False, primary_key=True)
-    tag = movie_db.Column(movie_db.String(40)) #用不多于20个字描述一下自己
+class User_info(movie_db.Model, UserMixin): #继承UserMixin类
+    user_id = movie_db.Column(movie_db.String(128), nullable = False, primary_key=True)
+    username = movie_db.Column(movie_db.String(128), nullable = False)
+    password_hash = movie_db.Column(movie_db.String(128), nullable = False)
+    mv_starred = movie_db.Column(movie_db.String(128)) #收藏的电影
+    act_starred = movie_db.Column(movie_db.String(128)) #收藏的演员
+    tag = movie_db.Column(movie_db.String(128)) #用不多于10个字描述一下自己
+
+    def set_password(self, password): #设定密码
+        self.password_hash = generate_password_hash(password)
+
+    def validate_password(self, password): #检验密码
+        return check_password_hash(self.password_hash, password)
+    
+    def get_id(self):
+        return str(self.user_id)
 
 class Mv_Act(movie_db.Model):
     id = movie_db.Column(movie_db.Integer, nullable = False, primary_key=True)
@@ -64,12 +79,12 @@ class Mv_Act(movie_db.Model):
     act_id = movie_db.Column(movie_db.Integer, nullable = False)
     mv_id = movie_db.Column(movie_db.Integer, nullable = False)
     
-class Mv_User():
+class Mv_User(movie_db.Model):
     mv_rate= movie_db.Column(movie_db.Float, nullable = False, primary_key=True)  #用户在系统中的评分
     username = movie_db.Column(movie_db.String(10), nullable = False)
     mv_id = movie_db.Column(movie_db.Integer, nullable = False)
 
-class Act_User():
+class Act_User(movie_db.Model):
     act_rate = movie_db.Column(movie_db.Float, nullable = False, primary_key=True) #用户在系统中的评分
     username = movie_db.Column(movie_db.String(10), nullable = False)
     act_id = movie_db.Column(movie_db.Integer, nullable = False)
@@ -211,7 +226,7 @@ def drill_data():
     click.echo('初始化电影数据已经导入！')
 
 @app.route('/', methods = ['GET', 'POST'])
-def search():
+def index():
     if request.method == 'POST': #关键，如果表单提交了再渲染搜索结果的界面！！
         if 'search_mv' in request.form: #一个页面有多份表单时，根据提交的表单进行跳转
             #传入前端表单用户输入的数据
@@ -300,21 +315,25 @@ def search():
         return render_template('mainpage_base.html')
 
 @app.route('/admin', methods = ['GET', 'POST']) #编辑信息装饰器
+@login_required #用于视图保护
 def demo():
     if request.method == 'GET':
         return render_template('admin_page.html') #未提交表单，则仅仅渲染页面
 
 @app.route('/admin_mv_page', methods = ['GET'])
+@login_required #用于视图保护
 def demo_mv():
     rst = Movie_info.query.all()
     return render_template('admin_mv_page.html', rst_movies = rst)
 
 @app.route('/admin_act_page', methods = ['GET'])
+@login_required #用于视图保护
 def demo_act():
     rst = Actor_info.query.all()
     return render_template('admin_act_page.html', rst_actors = rst)
 
 @app.route('/admin_add_mv', methods = ['GET', 'POST'])
+@login_required #用于视图保护
 def add_mv():
     if request.method == 'POST':
         new_data = request.get_json() #以嵌套字典的形式返回输入值
@@ -337,6 +356,7 @@ def add_mv():
         return render_template('admin_mv_page.html', rst_movies = search_rst)
 
 @app.route('/admin_modify_mv', methods = ['GET', 'POST'])
+@login_required #用于视图保护
 def modify_mv():
     if request.method == 'POST':
         rst = Movie_info.query.get_or_404(request.form['mv_id']) #仍然显示所有电影信息
@@ -354,6 +374,7 @@ def modify_mv():
         return render_template('admin_mv_page.html', rst_movies = all_rst)
 
 @app.route('/admin_delete_mv', methods = ['GET', 'POST'])
+@login_required #用于视图保护
 def delete_mv():
     if request.method == 'POST':
         movie = Movie_info.query.get_or_404(request.form['mv_id'])
@@ -365,6 +386,7 @@ def delete_mv():
         return render_template('admin_mv_page.html', rst_movies = all_rst)
     
 @app.route('/admin_add_act', methods = ['GET', 'POST'])
+@login_required #用于视图保护
 def add_act():
     if request.method == 'POST':
         new_data = request.get_json() #以嵌套字典的形式返回输入值
@@ -380,6 +402,7 @@ def add_act():
         return render_template('admin_act_page.html', rst_actors = search_rst)
 
 @app.route('/admin_modify_act', methods = ['GET', 'POST'])
+@login_required #用于视图保护
 def modify_act():
     if request.method == 'POST':
         rst = Actor_info.query.get_or_404(request.form['act_id']) #仍然显示所有电影信息
@@ -392,6 +415,7 @@ def modify_act():
         return render_template('admin_act_page.html', rst_actors = all_rst)
 
 @app.route('/admin_delete_act', methods = ['GET', 'POST'])
+@login_required #用于视图保护
 def delete_act():
     if request.method == 'POST':
         act = Actor_info.query.get_or_404(request.form['act_id'])
@@ -465,3 +489,41 @@ def predict():
     radar_data = {'labels': radar_labels, 'datasets': radar_data_sets}
 
     return render_template('search_mv.html', rst_movies = search_rst, mv_line_data = line_data, mv_doughnut_data = doughnut_data, mv_radar_data = radar_data, prediction=prediction[0], img_url=img_url)
+
+@login_manager.user_loader
+def load_user(user_id):
+    user = User_info.query.get(user_id)
+    return user
+
+@app.route('/login', methods = ['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        user_id = request.form['user_id']
+        password_hash = request.form['password']
+        username = request.form['username']
+
+        user = User_info.query.filter(User_info.user_id == user_id).first()
+        if user is not None:  #判断查询结果是否为空
+            if user_id == user.user_id and user.validate_password(password_hash):
+                if user.user_id == "1" and user.username == "admin": #管理员登录
+                    login_user(user)
+                    return render_template('admin_page.html')
+                else: #其他用户登录
+                    login_user(user)
+                    return render_template('mainpage_base.html')
+            else:
+                return render_template('mainpage_base.html')
+        else:
+            user = User_info(user_id = user_id, username = username)  #用户名默认为id
+            user.set_password(password_hash)
+            movie_db.session.add(user)
+            movie_db.session.commit()
+            login_user(user)
+            return render_template('mainpage_base.html')
+    return render_template('mainpage_base.html')
+        
+@app.route('/logout', methods = ['POST'])
+@login_required #用于视图保护
+def logout():
+    logout_user() # 登出用户
+    return render_template('mainpage_base.html') #此语句返回给AJAX，故不会生效

@@ -41,15 +41,20 @@
 
           <ul class="left">
             <li class="divider"></li> <!--纵向分隔线-->
-            <li><a href="#" onclick="redirectToAnotherPage()">主页</a></li>
+            <li><a href="#" onclick="redirectToMainPage()">主页</a></li>
             <li class="divider"></li><!--纵向分隔线-->
-            <li><a href="#">Main Item 2</a></li>
-            <li class="divider"></li><!--纵向分隔线-->
+            <li><a href="#">数据分析面板</a></li>
+            <li class="divider"></li><!--纵向分隔线-->        
+            {% if current_user.is_authenticated %}
+              {% if current_user.get_id() == "1" %}
+                <li><a href="#" onclick="redirectToAdmin()">管理员后台</a></li>
+              {% endif %}
+            {% endif %}
           </ul>
 
           <!--弹出式搜索栏-->
           <ul class="right">
-            <button type="button" class="button" data-reveal-id="search"><i class="fi-magnifying-glass"></i> 搜索</button>
+            <button type="button" class="button radius" data-reveal-id="search"><i class="fi-magnifying-glass"></i> 搜索</button>
             <div id="search" class="reveal-modal" data-reveal>
               <br>
               <ul class="tabs" data-tab>
@@ -175,16 +180,23 @@
               </div>
               <a class="close-reveal-modal">&times;</a> <!--关闭按钮-->
             </div>
+            
+            {% if current_user.is_authenticated %}
+              <button type="button" class="button radius" id="logout">{{ current_user.username }} 退出</button>
+            {% else %}
+              <button type="button" class="button radius" data-reveal-id="login"><i class="fi-pencil"></i> 登录/注册</button>
+            {% endif %}
 
-            <button type="button" class="button" data-reveal-id="login"><i class="fi-magnifying-glass"></i> 登录/注册</button>
             <div id="login" class="reveal-modal" data-reveal>
               <br>
-              <form method="post">
+              <form action = "/login" method = "post">
                 <div data-alert class="alert-box warning">
                   <strong>请注意！</strong> 如果您之前未注册过账号，系统将为您自动注册。
                   <a href="#" class="close">&times;</a>
                 </div>
-                <input type="text" name = "user_name" placeholder="请输入用户名" required> <!--required表示数据是必须输入的-->
+                <input type="text" name = "user_id" placeholder="请输入用户ID" required> <!--required表示数据是必须输入的-->
+                <input type="password" name = "password" placeholder="请输入密码" required> 
+                <input type="text" name = "username" placeholder="请输入用户名(可选)"> 
                 <input class="button" type = "submit" name = "log_in" value="登录/注册">
               </form>
               <a class="close-reveal-modal">&times;</a>
@@ -215,12 +227,39 @@
     <script>
       $(document).foundation();
     </script>
-        <script>
-          function redirectToAnotherPage() 
-          {
-              window.location.href = '/'; //这里写装饰器函数的URL
+
+    <script>
+      function redirectToMainPage() 
+      {
+          window.location.href = '/'; //这里写装饰器函数的URL
+      }
+    </script>
+
+    <script>
+      function redirectToAdmin()
+      {
+          window.location.href = '/admin'; //这里写装饰器函数的URL
+      }
+    </script>
+
+    <script>
+      document.getElementById('logout').addEventListener('click', function() {
+        // 使用 AJAX 请求触发后端视图函数
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/logout', true);
+        xhr.onreadystatechange = function() {
+          if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+              console.log(xhr.responseText);
+              window.location.href = '/'; //退出后重定向回到主页
+            } else {
+              console.error('Error:', xhr.status);
+            }
           }
-      </script>
+        };
+        xhr.send();
+      });
+    </script>
 
   </body>
   <!--主体部分结束-->
