@@ -194,7 +194,8 @@
                   <strong>请注意！</strong> 如果您之前未注册过账号，系统将为您自动注册。
                   <a href="#" class="close">&times;</a>
                 </div>
-                <input type="text" name = "user_id" placeholder="请输入用户ID" required> <!--required表示数据是必须输入的-->
+                <input type="text" id = "user_id" name = "user_id" placeholder="请输入用户ID" required> <!--required表示数据是必须输入的-->
+                <p id="id_check" style="color: red;"></p>
                 <input type="password" name = "password" placeholder="请输入密码" required> 
                 <input type="text" name = "username" placeholder="请输入用户名(可选)"> 
                 <input class="button" type = "submit" name = "log_in" value="登录/注册">
@@ -258,6 +259,35 @@
           }
         };
         xhr.send();
+      });
+    </script>
+
+    <script>
+      $(document).ready(function () {
+          // 监听用户名输入框的变化
+          $("#user_id").on("input", function () {
+              // 获取输入的用户名
+              var user_id = $(this).val();
+
+              // 发送异步请求到Flask后端检查用户名是否已经被注册
+              $.ajax({
+                  url: "/id_check",
+                  type: "POST",
+                  data: { user_id: user_id },
+                  success: function (response) {
+                      if (response.exists) {
+                          // 用户名已被注册
+                          $("#id_check").text("ID已注册，可直接登录！");
+                      } else {
+                          // 用户名可用
+                          $("#id_check").text("ID未注册，请输入密码以完成注册！");
+                      }
+                  },
+                  error: function (error) {
+                      console.log("Error checking username:", error);
+                  }
+              });
+          });
       });
     </script>
 

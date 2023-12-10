@@ -1,7 +1,7 @@
 #@Mengchu Feng---2021201793
 
 from flask import Flask, render_template
-from flask import request, url_for, redirect, flash
+from flask import request, url_for, redirect, flash, jsonify
 # from flask_wtf import FlaskForm
 # from wtforms import StringField, FloatField, DateField, SelectField, TextAreaField, SubmitField
 # from wtforms.validators import DataRequired, Length
@@ -527,3 +527,14 @@ def login():
 def logout():
     logout_user() # 登出用户
     return render_template('mainpage_base.html') #此语句返回给AJAX，故不会生效
+
+@app.route('/id_check', methods = ['POST'])
+def id_check():
+    if request.method == 'POST':
+        user_id = request.form['user_id']
+        user = User_info.query.filter(User_info.user_id == user_id).first()
+
+        if user is not None:
+            return jsonify({'exists': user.user_id})
+        else:
+            return jsonify({'exists': None})
