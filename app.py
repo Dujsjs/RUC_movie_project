@@ -259,6 +259,14 @@ def index():
             else:
                 pass
             search_rst = temp_query.all()
+            
+            act_rst = {}
+            for mv_element in search_rst:
+                mv_id = mv_element.mv_id
+                act_que = movie_db.session.query(Actor_info.act_name).join(Mv_Act, Mv_Act.act_id == Actor_info.act_id).filter(Mv_Act.mv_id == mv_id).all()
+                act_list = [temp for temp in act_que]
+                unique_act_list = list(set(act_list))
+                act_rst[mv_id] = unique_act_list
 
             engine = create_engine('sqlite:///data.db') #链接数据库引擎
             Session = sessionmaker(bind=engine)
@@ -288,7 +296,7 @@ def index():
                 radar_data_sets.append(temp_dic)
             radar_data = {'labels': radar_labels, 'datasets': radar_data_sets}
 
-            return render_template('search_mv.html', rst_movies = search_rst, mv_line_data = line_data, mv_doughnut_data = doughnut_data, mv_radar_data = radar_data)
+            return render_template('search_mv.html', rst_movies = search_rst, rst_acts = act_rst, mv_line_data = line_data, mv_doughnut_data = doughnut_data, mv_radar_data = radar_data)
         
         elif 'search_act' in request.form:
             act_id = request.form.get('act_id')
@@ -306,7 +314,16 @@ def index():
             if act_country:
                 temp_query = temp_query.filter(Actor_info.act_country.ilike(f'%{act_country}%'))
             search_rst = temp_query.all()
-            return render_template('search_act.html', rst_actors = search_rst)
+
+            mv_rst = {}
+            for act_element in search_rst:
+                act_id = act_element.act_id
+                mv_que = movie_db.session.query(Movie_info.mv_name).join(Mv_Act, Mv_Act.mv_id == Movie_info.mv_id).filter(Mv_Act.act_id == act_id).all()
+                mv_list = [temp for temp in mv_que]
+                unique_mv_list = list(set(mv_list))
+                mv_rst[act_id] = unique_mv_list
+
+            return render_template('search_act.html', rst_actors = search_rst, rst_mvs = mv_rst)
         
         else:
             return redirect(url_for('/')) #收到不知名表单，则跳转回主页
@@ -538,3 +555,12 @@ def id_check():
             return jsonify({'exists': user.user_id})
         else:
             return jsonify({'exists': None})
+
+@app.route('/find_act', methods = ['POST'])
+def find_act():
+    if request.method == 'POST':
+        mv_id = request.form['mv_id']
+        act_rst = Mv_Act.query.filter(Mv_Act.mv_id == mv_id).all()
+        act_list = [(row[2], "(" + row[1] + ")") for row in act_rst]  #返回演员名称和身份
+
+        return jsonify({'result': act_list})

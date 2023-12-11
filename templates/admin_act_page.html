@@ -1,3 +1,5 @@
+{% if current_user.is_authenticated %}
+{% if current_user.get_id() == "1" %}
 {% extends 'mainpage_base.html' %}
 
 {% block 图片展示 %} <!--这里在管理员界面用于编辑、添加、删除数据-->
@@ -165,7 +167,7 @@
     {
         var formContainer = document.getElementById('formContainer');
         var formGroups = formContainer.getElementsByClassName('form-group');
-        if (formGroups.length > 2) 
+        if (formGroups.length > 1) 
         {
             formGroups[formGroups.length - 1].remove();
         }
@@ -223,78 +225,130 @@
 
 {% block 搜索结果 %} <!--跳过搜索，直接展示所有电影数据信息-->
 <style>
-    .button-container 
+    .image-limit 
     {
-    text-align: right;
-    margin-top: 10px; /* 根据需要调整间距 */
+      max-width: 390px;
+      max-height: 260px;
+    }
+
+    .accordion-navigation 
+    {
+      border-bottom: 1px solid #ccc; /* 添加底部边框，可以根据需要调整颜色和宽度 */
+    }
+
+    .row_container 
+    {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
 </style>
 
 <div style="padding:20px;">
-    {% for actor in rst_actors %}
-        <div class="panel radius">
-            <h3>{{ actor.act_name }}</h3>
-            <br>
-            <p>演员编号: {{ actor.act_id }}</p>
-            <p>演员性别: {{ actor.gender }}</p>
-            <p>演员国籍: {{ actor.act_country }}</p>
-            <p>参演过的电影: 
-            {% for mv in relate_mv %}
-                {{ mv.act_name }}
-            {% endfor %}
-            </p>
-
-            <div class="button-container">
-                <button type="button" class="button round" data-reveal-id="edit_{{ loop.index }}">编辑</button>
-                <button type="button" class="button round" data-reveal-id="delete_{{ loop.index }}">删除</button>
+    <ul class="accordion" data-accordion>
+      {% for actor in rst_actors %}
+        <li class="accordion-navigation">
+            <a href="#demo_{{ loop.index }}">
+                <div class="row_container">
+                    <h5>{{ actor.act_name }}</h5>
+                    <ul class="button-group radius">
+                        <button type="button" class="button round small" data-reveal-id="edit_{{ loop.index }}">编辑</button>
+                        <button type="button" class="button round small" data-reveal-id="delete_{{ loop.index }}">删除</button>
+                    </ul>
+                </div>
+            </a>
+            <div id="demo_{{ loop.index }}" class="content">
+                <div class="panel radius">
+                <p>演员编号: {{ actor.act_id }}</p>
+                <p>演员性别: {{ actor.gender }}</p>
+                <p>演员国籍: {{ actor.act_country }}</p>
+                <p>参演过的电影: </p>
+                </div>
             </div>
+        </li>
 
-            <div id="delete_{{ loop.index }}" class="reveal-modal medium" data-reveal>
-                <form class="act_delete_Form" action="/admin_delete_act" method="post">
-                    <br>
-                    <div data-alert class="alert-box warning">
-                        <strong>请注意：</strong>您真的要删除此位演员吗？
-                        <a href="#" class="close">&times;</a>
-                    </div>
-
-                    <label for="act_id">要删除的演员ID：</label>
-                    <input type="text" id="act_id" name="act_id" value="{{ actor.act_id }}" readonly><br>
-
-                    <label for="act_name">要删除的演员姓名：</label>
-                    <input type="text" id="act_name" name="act_name" value="{{ actor.act_name }}" readonly><br>
-                    <input class="button" type = "submit" name = "delete" value="确认删除">
-                    <a class="close-reveal-modal">&times;</a>  <!--这是关闭窗口的按钮-->
-                </form>
-            </div>
-
-            <div id="edit_{{ loop.index }}" class="reveal-modal large" data-reveal> <!--易错！这里一定要循环设置id用于辨别不同的模态框-->
+        <div id="delete_{{ loop.index }}" class="reveal-modal medium" data-reveal>
+            <form class="act_delete_Form" action="/admin_delete_act" method="post">
                 <br>
-                <fieldset>
-                    <div data-alert class="alert-box warning">
-                        <strong>请注意：</strong>若要修改电影，请前往电影修改界面！
-                        <a href="#" class="close">&times;</a>
-                    </div>
+                <div data-alert class="alert-box warning">
+                    <strong>请注意：</strong>您真的要删除此位演员吗？
+                    <a href="#" class="close">&times;</a>
+                </div>
 
-                    <legend>请输入修改后的演员信息</legend>
-                    <form class="act_edit_Form" action="/admin_modify_act" method="post">
-                        <label for="act_id">演员ID：(不可人为修改！)</label>
-                        <input type="text" id="act_id" name="act_id" value="{{ actor.act_id }}" readonly required><br>
+                <label for="act_id">要删除的演员ID：</label>
+                <input type="text" id="act_id" name="act_id" value="{{ actor.act_id }}" readonly><br>
 
-                        <label for="act_name">演员姓名：</label>
-                        <input type="text" id="act_name" name="act_name" value="{{ actor.act_name }}" required><br>
-
-                        <label for="gender">演员性别：</label>
-                        <input type="text" id="gender" name="gender" value="{{ actor.gender }}" required><br>
-
-                        <label for="act_country">国籍：</label>
-                        <input type="text" id="act_country" name="act_country" value="{{ actor.act_country }}" required><br>
-
-                        <input class="button" type = "submit" name = "modify" value="确认修改">
-                    </form>
-                </fieldset>
-                <a class="close-reveal-modal">&times;</a>
-            </div>
+                <label for="act_name">要删除的演员姓名：</label>
+                <input type="text" id="act_name" name="act_name" value="{{ actor.act_name }}" readonly><br>
+                <input class="button" type = "submit" name = "delete" value="确认删除">
+                <a class="close-reveal-modal">&times;</a>  <!--这是关闭窗口的按钮-->
+            </form>
         </div>
-    {% endfor %}
+
+        <div id="edit_{{ loop.index }}" class="reveal-modal large" data-reveal> <!--易错！这里一定要循环设置id用于辨别不同的模态框-->
+            <br>
+            <fieldset>
+                <div data-alert class="alert-box warning">
+                    <strong>请注意：</strong>若要修改电影，请前往电影修改界面！
+                    <a href="#" class="close">&times;</a>
+                </div>
+
+                <legend>请输入修改后的演员信息</legend>
+                <form class="act_edit_Form" action="/admin_modify_act" method="post">
+                    <label for="act_id">演员ID：(不可人为修改！)</label>
+                    <input type="text" id="act_id" name="act_id" value="{{ actor.act_id }}" readonly required><br>
+
+                    <label for="act_name">演员姓名：</label>
+                    <input type="text" id="act_name" name="act_name" value="{{ actor.act_name }}" required><br>
+
+                    <label for="gender">演员性别：</label>
+                    <input type="text" id="gender" name="gender" value="{{ actor.gender }}" required><br>
+
+                    <label for="act_country">国籍：</label>
+                    <input type="text" id="act_country" name="act_country" value="{{ actor.act_country }}" required><br>
+
+                    <input class="button" type = "submit" name = "modify" value="确认修改">
+                </form>
+            </fieldset>
+            <a class="close-reveal-modal">&times;</a>
+        </div>
+      {% endfor %}
+    </ul>
 </div>
-{% endblock 搜索结果 %} 
+{% endblock 搜索结果 %}
+
+{% else %}
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>电影管理系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.3/css/normalize.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.3/css/foundation.min.css">
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/foundicons/3.0.0/foundation-icons.css' rel='stylesheet' type='text/css'>
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/foundation/5.5.3/js/foundation.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+
+    <style>
+      /* 使用 CSS 样式规则 */
+      .custom-image {
+        width: 690px;
+        height: 480px;
+      }
+    </style>
+</head>
+<div style="padding:20px">
+    <h3>非法访问，请您立刻返回！</h3>
+    <ul class="button-group round">
+        <li><button type="button" class="button" onclick="redirectToMainPage()">返回</button></li>
+    </ul>
+</div>
+
+<script>
+    function redirectToMainPage() 
+    {
+        window.location.href = '/'; //这里写装饰器函数的URL
+    }
+</script>
+{% endif %}
+{% endif %}

@@ -1,3 +1,5 @@
+{% if current_user.is_authenticated %}
+{% if current_user.get_id() == "1" %}
 {% extends 'mainpage_base.html' %}
 
 {% block 图片展示 %} <!--这里在管理员界面用于编辑、添加、删除数据-->
@@ -344,98 +346,152 @@
 
 {% block 搜索结果 %} <!--跳过搜索，直接展示所有电影数据信息-->
 <style>
-    .button-container 
+    .image-limit 
     {
-    text-align: right;
-    margin-top: 10px; /* 根据需要调整间距 */
+      max-width: 390px;
+      max-height: 260px;
+    }
+
+    .accordion-navigation 
+    {
+      border-bottom: 1px solid #ccc; /* 添加底部边框，可以根据需要调整颜色和宽度 */
+    }
+
+    .row_container 
+    {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
 </style>
 
 <div style="padding:20px;">
-    {% for movie in rst_movies %}
-        <div class="panel radius">
-            <h3>{{ movie.mv_name }}</h3>
-            <br>
-            <p>电影编号: {{ movie.mv_id }}</p>
-            <p>电影发行日期: {{ movie.rls_date }}</p>
-            <p>电影发行国家: {{ movie.mv_country }}</p>
-            <p>电影类型: {{ movie.mv_type }}</p>
-            <p>电影票房: {{ movie.mv_box }}</p>
-            <p>网络评分: {{ movie.online_rate }}</p>
-            <p>获奖数量: {{ movie.prize_num }}</p>
-            <p>评论数量: {{ movie.comments_num }}</p>
-            <p>影片时长: {{ movie.duration }}</p>
-            <p>参演人员: 
-                {% for act in relate_act %}
-                    {{ act.act_name }}
-                {% endfor %}
-            </p>
-            <div class="button-container">
-                <button type="button" class="button round" data-reveal-id="edit_{{ loop.index }}">编辑</button>
-                <button type="button" class="button round" data-reveal-id="delete_{{ loop.index }}">删除</button>
-            </div>
-
-            <div id="delete_{{ loop.index }}" class="reveal-modal medium" data-reveal>
-                <form class="mv_delete_Form" action="/admin_delete_mv" method="post">
-                    <br>
-                    <div data-alert class="alert-box warning">
-                        <strong>请注意：</strong>您真的要删除此部电影吗？
-                        <a href="#" class="close">&times;</a>
+    <ul class="accordion" data-accordion>
+      {% for movie in rst_movies %}
+        <li class="accordion-navigation">
+            <a href="#demo_{{ loop.index }}">
+                <div class="row_container">
+                    <h5>{{ movie.mv_name }}</h5>
+                    <ul class="button-group radius">
+                        <button type="button" class="button round small" data-reveal-id="edit_{{ loop.index }}">编辑</button>
+                        <button type="button" class="button round small" data-reveal-id="delete_{{ loop.index }}">删除</button>
+                    </ul>
+                </div>
+            </a>
+            <div id="demo_{{ loop.index }}" class="content">
+                <div class="panel radius">
+                    <p>电影编号: {{ movie.mv_id }}</p>
+                    <p>电影发行日期: {{ movie.rls_date }}</p>
+                    <p>电影发行国家: {{ movie.mv_country }}</p>
+                    <p>电影类型: {{ movie.mv_type }}</p>
+                    <p>电影票房: {{ movie.mv_box }}</p>
+                    <p>网络评分: {{ movie.online_rate }}</p>
+                    <p>评论数量: {{ movie.comments_num }}</p>
+                    <p>影片时长: {{ movie.duration }}</p>
+                    <p>参演人员:</p>
+        
+                    <div id="delete_{{ loop.index }}" class="reveal-modal medium" data-reveal>
+                        <form class="mv_delete_Form" action="/admin_delete_mv" method="post">
+                            <br>
+                            <div data-alert class="alert-box warning">
+                                <strong>请注意：</strong>您真的要删除此部电影吗？
+                                <a href="#" class="close">&times;</a>
+                            </div>
+        
+                            <label for="mv_id">要删除的电影ID：</label>
+                            <input type="text" id="mv_id" name="mv_id" value="{{ movie.mv_id }}" readonly><br>
+        
+                            <label for="mv_name">要删除的电影名称：</label>
+                            <input type="text" id="mv_name" name="mv_name" value="{{ movie.mv_name }}" readonly><br>
+                            <input class="button" type = "submit" name = "delete" value="确认删除">
+                            <a class="close-reveal-modal">&times;</a>  <!--这是关闭窗口的按钮-->
+                        </form>
                     </div>
-
-                    <label for="mv_id">要删除的电影ID：</label>
-                    <input type="text" id="mv_id" name="mv_id" value="{{ movie.mv_id }}" readonly><br>
-
-                    <label for="mv_name">要删除的电影名称：</label>
-                    <input type="text" id="mv_name" name="mv_name" value="{{ movie.mv_name }}" readonly><br>
-                    <input class="button" type = "submit" name = "delete" value="确认删除">
-                    <a class="close-reveal-modal">&times;</a>  <!--这是关闭窗口的按钮-->
-                </form>
-            </div>
-
-            <div id="edit_{{ loop.index }}" class="reveal-modal large" data-reveal> <!--易错！这里一定要循环设置id用于辨别不同的模态框-->
-                <br>
-                <fieldset>
-                    <div data-alert class="alert-box warning">
-                        <strong>请注意：</strong>若要修改演员，请前往演员管理界面！
-                        <a href="#" class="close">&times;</a>
+        
+                    <div id="edit_{{ loop.index }}" class="reveal-modal large" data-reveal> <!--易错！这里一定要循环设置id用于辨别不同的模态框-->
+                        <br>
+                        <fieldset>
+                            <div data-alert class="alert-box warning">
+                                <strong>请注意：</strong>若要修改演员，请前往演员管理界面！
+                                <a href="#" class="close">&times;</a>
+                            </div>
+        
+                            <legend>请输入修改后的电影信息</legend>
+                            <form class="mv_edit_Form" action="/admin_modify_mv" method="post">
+                                <label for="mv_id">电影ID：(不可人为修改！)</label>
+                                <input type="text" id="mv_id" name="mv_id" value="{{ movie.mv_id }}" readonly required><br>
+        
+                                <label for="mv_name">电影名称：</label>
+                                <input type="text" id="mv_name" name="mv_name" value="{{ movie.mv_name }}" required><br>
+        
+                                <label for="mv_rls_date">电影发行日期：</label>
+                                <input type="text" id="mv_rls_date" name="mv_rls_date" value="{{ movie.rls_date }}" required><br>
+        
+                                <label for="mv_country">电影发行国家：</label>
+                                <input type="text" id="mv_country" name="mv_country" value="{{ movie.mv_country }}" required><br>
+        
+                                <label for="mv_type">电影类型：</label>
+                                <input type="text" id="mv_type" name="mv_type" value="{{ movie.mv_type}}" required><br>
+        
+                                <label for="mv_box">电影票房：</label>
+                                <input type="text" id="mv_box" name="mv_box" value="{{ movie.mv_box}}" required><br>
+        
+                                <label for="online_rate">网络评分：</label>
+                                <input type="text" id="online_rate" name="online_rate" value="{{ movie.online_rate}}" required><br>
+        
+                                <label for="comments_num">评论数量：</label>
+                                <input type="text" id="comments_num" name="comments_num" value="{{ movie.comments_num}}" required><br>
+        
+                                <label for="duration">影片时长：</label>
+                                <input type="text" id="duration" name="duration" value="{{ movie.duration}}" required>
+        
+                                <input class="button" type = "submit" name = "modify" value="确认修改">
+                            </form>
+                        </fieldset>
+                        <a class="close-reveal-modal">&times;</a>
                     </div>
-
-                    <legend>请输入修改后的电影信息</legend>
-                    <form class="mv_edit_Form" action="/admin_modify_mv" method="post">
-                        <label for="mv_id">电影ID：(不可人为修改！)</label>
-                        <input type="text" id="mv_id" name="mv_id" value="{{ movie.mv_id }}" readonly required><br>
-
-                        <label for="mv_name">电影名称：</label>
-                        <input type="text" id="mv_name" name="mv_name" value="{{ movie.mv_name }}" required><br>
-
-                        <label for="mv_rls_date">电影发行日期：</label>
-                        <input type="text" id="mv_rls_date" name="mv_rls_date" value="{{ movie.rls_date }}" required><br>
-
-                        <label for="mv_country">电影发行国家：</label>
-                        <input type="text" id="mv_country" name="mv_country" value="{{ movie.mv_country }}" required><br>
-
-                        <label for="mv_type">电影类型：</label>
-                        <input type="text" id="mv_type" name="mv_type" value="{{ movie.mv_type}}" required><br>
-
-                        <label for="mv_box">电影票房：</label>
-                        <input type="text" id="mv_box" name="mv_box" value="{{ movie.mv_box}}" required><br>
-
-                        <label for="online_rate">网络评分：</label>
-                        <input type="text" id="online_rate" name="online_rate" value="{{ movie.online_rate}}" required><br>
-
-                        <label for="comments_num">评论数量：</label>
-                        <input type="text" id="comments_num" name="comments_num" value="{{ movie.comments_num}}" required><br>
-
-                        <label for="duration">影片时长：</label>
-                        <input type="text" id="duration" name="duration" value="{{ movie.duration}}" required>
-
-                        <input class="button" type = "submit" name = "modify" value="确认修改">
-                    </form>
-                </fieldset>
-                <a class="close-reveal-modal">&times;</a>
+                </div>
             </div>
-        </div>
-    {% endfor %}
+
+            
+        </li>
+      {% endfor %}
+    </ul>
 </div>
-{% endblock 搜索结果 %} 
+{% endblock 搜索结果 %}
+
+{% else %}
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>电影管理系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.3/css/normalize.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.3/css/foundation.min.css">
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/foundicons/3.0.0/foundation-icons.css' rel='stylesheet' type='text/css'>
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/foundation/5.5.3/js/foundation.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+
+    <style>
+      /* 使用 CSS 样式规则 */
+      .custom-image {
+        width: 690px;
+        height: 480px;
+      }
+    </style>
+</head>
+<div style="padding:20px">
+    <h3>非法访问，请您立刻返回！</h3>
+    <ul class="button-group round">
+        <li><button type="button" class="button" onclick="redirectToMainPage()">返回</button></li>
+    </ul>
+</div>
+
+<script>
+    function redirectToMainPage() 
+    {
+        window.location.href = '/'; //这里写装饰器函数的URL
+    }
+</script>
+{% endif %}
+{% endif %}

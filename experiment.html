@@ -1,249 +1,90 @@
-<script type="text/javascript">
-  //xx----------------------------------------------------------------------------------------------------------
-      
-        //xx----------------------------------------------------------------------------------------------------------
-        //记录观看视频时总时长
-        function savegkspsc(time) {
-            var kcdm = "0AB4FA4CE2AD205EE0630100007FAC39";
-            var zjdm = "0B70B07D82CB5484E0630100007F1FB7";
-            var url = "/kcjxpt/moocxsxx/savegkspsc.do";
-            $.ajax({
-                type: "post",
-                data: {'kcdm': kcdm, 'zjdm': zjdm, 'playTime': time},
-                url: url,
-                async: false  //必须采用同步方法
-            });
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 引入 Foundation 5 的 CSS 文件 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.3/css/foundation.min.css">
+    <style>
+        /* 自定义样式，调整按钮样式 */
+        .custom-buttons-container {
+            position: absolute;
+            top: 50%;
+            right: 10px; /* 调整按钮到右侧的距离，根据需要调整位置 */
+            transform: translateY(-50%);
+            z-index: 1; /* 设置 z-index，确保按钮容器位于手风琴项上方 */
         }
 
-        //点击观看视频的时候记录观看时间
-        //     	 var c=0;
-        //          var t;
-        //开始视频和暂停观看的时常
-        //          function startVideoTime(){
-        //         	 $('#myVideo').bind('play',function(){
-        //         		 begin();
-        //            	 })
-        //          };
-        //          function begin(){
-        // 		 	  c=c+1;
-        // 		 	  t=setTimeout("begin()",1000);
-        // 		 	  if(c%10==0){
-        // 		 		  //10秒执行一次观看视频时间
-        // 		 		 savegkspsc(10);
-        // 			  }
-        //           }
-        //暂停视频和暂停观看的时常
-        //          function stopVideoTime(){
-        //          	//暂停视频
-        //        	 	$('#myVideo').bind('pause',function(){
-        //        	 		if(c%10==0){
-        //        	 		}else{
-        //        	 			c = c%10;
-        //    		 		 	savegkspsc(c);
-        //        	 		}
-        //    	 			c = 0;
-        //              	clearTimeout(t);
-        //        		})
-        //          };
-        //点击视频播放的时候
-        function videoclick(el) {//splj为平台播放地址 spfburl为校内网播放地址   dbsplj为相对路径
-            var xs_kcdm = '0AB4FA4CE2AD205EE0630100007FAC39'; //obj.kcdm eq '223'||obj.kcdm eq '219'||obj.kcdm eq '221'||obj.kcdm eq '215'||obj.kcdm eq '242'||obj.kcdm eq '249'
-            var xs_xxdm = '4111010002';
-            var spbfurl = "";
-            if (spbfurl != '') {//北邮学生为例（其223 219 221 215 242  249课程走校园网播放）
-                $(el).parent().hide();
-                $(el).parent().parent().find("video")[0].play();
-                var myVideo_ID = $(el).parent().parent().find("video")[0]; //获取DOM对象
-                var networkState = myVideo_ID.networkState;//获取网络状态（//2代表浏览器正在请求地址，请求完后有可能是3有可能是1 ；3代表 未找到音频/视频来源）
-                if (networkState == 2) {//如果为2，则再延时5秒等待状态
-                    setTimeout(function () {
-                        var networkState = myVideo_ID.networkState;//获取网络状态
-                        if (networkState == 3 || networkState == 2) {//2代表浏览器正在请求地址，请求完后有可能是3有可能是1 ；3代表 未找到音频/视频来源 ;
-                            $(".videobtn_popups").show();
-                        } else {
-                            $(el).parent().hide();
-                            $(el).parent().parent().find("video")[0].play();
-                        }
-                    }, 5000);
-                } else if (networkState == 3) {
-                    $(".videobtn_popups").show();
-                } else {
-                    $(el).parent().hide();
-                    $(el).parent().parent().find("video")[0].play();
-                }
-            } else {
-                $(el).parent().hide();
-                $(el).parent().parent().find("video")[0].play();
-            }
+        .custom-buttons-container button {
+            margin-bottom: 10px; /* 调整按钮之间的间距，根据需要调整大小 */
+            display: block;
+        }
+    </style>
+    <title>Foundation 5 Accordion with Buttons</title>
+</head>
+<body>
 
+    <div class="row">
+        <div class="large-12 columns">
+            <dl class="accordion" data-accordion>
+                <!-- 手风琴项 1 -->
+                <dd class="accordion-navigation">
+                    <a href="#panel1">Item 1</a>
+                    <div class="content">
+                        <p>Content for item 1.</p>
+                        <!-- 在手风琴项内部添加按钮容器 -->
+                        <div class="custom-buttons-container">
+                            <button onclick="handleButton1()">Button 1</button>
+                            <button onclick="handleButton2()">Button 2</button>
+                        </div>
+                    </div>
+                </dd>
+
+                <!-- 手风琴项 2 -->
+                <dd class="accordion-navigation">
+                    <a href="#panel2">Item 2</a>
+                    <div class="content">
+                        <p>Content for item 2.</p>
+                        <!-- 在手风琴项内部添加按钮容器 -->
+                        <div class="custom-buttons-container">
+                            <button onclick="handleButton1()">Button 1</button>
+                            <button onclick="handleButton2()">Button 2</button>
+                        </div>
+                    </div>
+                </dd>
+
+                <!-- 手风琴项 3 -->
+                <dd class="accordion-navigation">
+                    <a href="#panel3">Item 3</a>
+                    <div class="content">
+                        <p>Content for item 3.</p>
+                        <!-- 在手风琴项内部添加按钮容器 -->
+                        <div class="custom-buttons-container">
+                            <button onclick="handleButton1()">Button 1</button>
+                            <button onclick="handleButton2()">Button 2</button>
+                        </div>
+                    </div>
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    <!-- 引入 jQuery 和 Foundation 5 的 JavaScript 文件 -->
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.3/js/foundation.min.js"></script>
+    <!-- 初始化 Foundation -->
+    <script>
+        $(document).foundation();
+
+        // 你可以在这里添加按钮点击事件的处理函数
+        function handleButton1() {
+            alert("Button 1 clicked");
         }
 
-        //切换线路
-        function switchingLines(index, splj, type) {
-            var myVideo_ID = $('#myVideo_' + index); //获取DOM对象
-            $(".videobtn_popups").hide();
-            var networkState = myVideo_ID[0].networkState;//获取网络状态（//2代表浏览器正在请求地址，请求完后有可能是3有可能是1 ；3代表 未找到音频/视频来源）
-            if (type == "1") {//校内线路
-                if (networkState == 2) {//如果未2，则再延时5表等待状态
-                    setTimeout(function () {
-                        var networkState = myVideo_ID[0].networkState;//获取网络状态
-                        if (networkState == 3 || networkState == 2) {//2代表浏览器正在请求地址，请求完后有可能是3有可能是1 ；3代表 未找到音频/视频来源 ;
-                            $(".videobtn_popups").show();
-                        } else {
-                            document.getElementById("sourceID_" + index).src = splj;
-                            myVideo_ID.load();
-                            myVideo_ID[0].play();
-                        }
-                    }, 5000);
-                } else if (networkState == 3) {
-                    $(".videobtn_popups").show();
-                } else {
-                    document.getElementById("sourceID_" + index).src = splj;
-                    myVideo_ID.load();
-                    myVideo_ID[0].play();
-                }
-            } else {//校外
-                document.getElementById("sourceID_" + index).src = splj;
-                myVideo_ID.load();
-                myVideo_ID[0].play();
-            }
-
-
+        function handleButton2() {
+            alert("Button 2 clicked");
         }
+    </script>
 
-        //页面加载 如果视频未完成不能拖动进度条 已完成的话可以拖动
-        $(function () {
-            //切换标签页的时候
-            document.addEventListener('visibilitychange', function () {
-                var video = document.querySelector("video");
-                if (document.visibilityState == 'hidden') {//切离该页面时执行
-                    video.pause();
-                } else if (document.visibilityState == 'visible') {//切换到该页面时执行
-                    $("#video-img").hide();
-                    video.play();
-                }
-            });
-            //禁止查看源码
-            window.onload = function () {
-                document.onkeydown = function () {
-                    var e = window.event || arguments[0];
-                    if (e.keyCode == 123) {
-                        return false;
-                    } else if ((e.ctrlKey) && (e.shiftKey) && (e.keyCode == 73)) {
-                        return false;
-                    } else if ((e.ctrlKey) && (e.keyCode == 85)) {
-                        return false;
-                    }
-                };
-
-                document.oncontextmenu = function () {
-                    return false;
-                }
-            };
-            //不让点击视频右键下载
-            $('.myVideo').bind('contextmenu', function () {
-                return false;
-            });
-            $('#pmp4').bind('contextmenu', function () {
-                return false;
-            });
-
-            var sym = [];
-            setInterval(function () {
-                
-                    var video = document.getElementById('myVideo_1')
-                    var lx = "2";
-                    if (lx != null && lx == "2") {
-                        var zt = "0";
-                        if (zt == "0") {//未完成
-                            var time = video.currentTime;
-                            if (time - sym[1] > 1) {
-                                video.currentTime = sym[1];
-                            }
-                            sym[1] = video.currentTime;
-                        }
-                    }
-                
-                    var video = document.getElementById('myVideo_2')
-                    var lx = "4";
-                    if (lx != null && lx == "2") {
-                        var zt = "0";
-                        if (zt == "0") {//未完成
-                            var time = video.currentTime;
-                            if (time - sym[2] > 1) {
-                                video.currentTime = sym[2];
-                            }
-                            sym[2] = video.currentTime;
-                        }
-                    }
-                
-            }, false)
-
-
-            var videos = document.getElementsByTagName('video');
-            for (var i = videos.length - 1; i >= 0; i--) {
-                (function () {
-                    var p = i;
-                    videos[p].addEventListener('play', function () {
-                        pauseAll(p);
-                    })
-                })()
-            }
-
-            function pauseAll(index) {
-                for (var j = videos.length - 1; j >= 0; j--) {
-                    if (j != index) videos[j].pause();
-                }
-            };
-        })
-
-        //voide 播放完成时的回调函数
-        function myFunction(streamName, str1, obj, spdm) {
-            var zt = $(obj).parent().parent().children(":first").html();
-            if (zt == "已完成") {
-                return false;
-            }
-            var kcdm = "0AB4FA4CE2AD205EE0630100007FAC39";
-            var zjdm = "0B70B07D82CB5484E0630100007F1FB7";
-            var str = '';
-            var index = streamName.indexOf("\/");
-            var str = streamName.substring(index + 1, streamName.length);
-            var url = "/kcjxpt/moocxsxx/updKcspSqzt.do";
-            $.ajax({
-                type: "post",
-                data: {'kcdm': kcdm, 'zjdm': zjdm, 'streamName': str, 'spdm': spdm},
-                url: url,
-                success: function (data) {
-                    if (data == "1") {
-                        $('#sp_index_' + str1).attr('class', 'action');
-                        $('#sp_index_' + str1).text("已完成");
-                    } else {
-                        alert("观看视频失败！！！");
-// 	                	 myFunction(streamName,str1);
-                    }
-                }
-            });
-        }
-
-        function tjjyzy(zjdm, xsdm, sftj) {
-            if (confirm("作业提交后将不能修改，您确认提交吗？")) {
-                $("#loadDivIfram").show();
-                var url = "/kcjxpt/moocxsxx/checkCysfktj";
-                $("#xsxxform").ajaxSubmit({
-                    url: url,
-                    type: "post",
-                    dataType: "json",
-                    success: function (result) {
-                        if (result == '1') {
-                            $("#sftj").val(sftj);
-                            var url = "/kcjxpt/moocxsxx/moocTjXsjy";
-                            $("#xsxxform").ajaxSubmit({
-                                url: url,
-                                type: "post",
-                                dataType: "json",
-                                success: function (result) {
-                                    if (result == '1') {
-// 	                                    	$("#loadDivIfram").hide();
-                                        alert("提交成功");
-                                  …
-      </script>
+</body>
+</html>

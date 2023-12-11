@@ -5,8 +5,13 @@
       <style>
           .image-limit 
           {
-              max-width: 390px;
-              max-height: 260px;
+            max-width: 390px;
+            max-height: 260px;
+          }
+
+          .accordion-navigation 
+          {
+            border-bottom: 1px solid #ccc; /* 添加底部边框，可以根据需要调整颜色和宽度 */
           }
       </style>
     </head>
@@ -148,25 +153,30 @@
     <hr>
     <!--展示查询结果-->
     <div style="padding:20px;">
-      {% for movie in rst_movies %}
-      <div class="panel radius">
-        <h3>{{ movie.mv_name }}</h3>
-        <br>
-        <p>电影编号: {{ movie.mv_id }}</p>
-        <p>电影发行日期: {{ movie.rls_date }}</p>
-        <p>电影发行国家: {{ movie.mv_country }}</p>
-        <p>电影类型: {{ movie.mv_type }}</p>
-        <p>电影票房: {{ movie.mv_box }}</p>
-        <p>网络评分: {{ movie.online_rate }}</p>
-        <p>评论数量: {{ movie.comments_num }}</p>
-        <p>影片时长: {{ movie.duration }}</p>
-        <p>参演人员: 
-          {% for act in relate_act %}
-            {{ act.act_name }}
-          {% endfor %}
-        </p>
-      </div>
-      {% endfor %}
+      <ul class="accordion" data-accordion>
+        {% for movie in rst_movies %}
+          <li class="accordion-navigation">
+            <a href="#demo_{{ loop.index }}">{{ movie.mv_name }}</a>
+            <div id="demo_{{ loop.index }}" class="content">
+              <div class="panel radius">
+                <p>电影编号: {{ movie.mv_id }}</p>
+                <p>电影发行日期: {{ movie.rls_date }}</p>
+                <p>电影发行国家: {{ movie.mv_country }}</p>
+                <p>电影类型: {{ movie.mv_type }}</p>
+                <p>电影票房: {{ movie.mv_box }}</p>
+                <p>网络评分: {{ movie.online_rate }}</p>
+                <p>评论数量: {{ movie.comments_num }}</p>
+                <p>影片时长: {{ movie.duration }}</p>
+                <p>主要参演人员:{% for key, value in rst_acts.items() %}
+                              {% if key == movie.mv_id %}
+                                {{ value }}
+                              {% endif %}
+                            {% endfor %}</p>
+              </div>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
     </div>
     {% endblock 搜索结果 %}
 

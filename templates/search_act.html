@@ -3,6 +3,21 @@
     {% block 图片展示 %}{% endblock 图片展示 %}
 
     {% block 搜索结果 %}
+    <head>
+      <style>
+          .image-limit 
+          {
+            max-width: 390px;
+            max-height: 260px;
+          }
+
+          .accordion-navigation 
+          {
+            border-bottom: 1px solid #ccc; /* 添加底部边框，可以根据需要调整颜色和宽度 */
+          }
+      </style>
+    </head>
+
     <!--搜索结果的图片滚动展示-->
     <div style="padding:20px">
       <h4>演员照片与简介</h4>
@@ -16,20 +31,25 @@
     <hr>
     <!--展示查询结果-->
     <div style="padding:20px;">
-      {% for actor in rst_actors %}
-      <div class="panel radius">
-        <h3>{{ actor.act_name }}</h3>
-        <br>
-        <p>演员编号: {{ actor.act_id }}</p>
-        <p>演员性别: {{ actor.gender }}</p>
-        <p>演员国籍: {{ actor.act_country }}</p>
-        <p>参演过的电影: 
-          {% for mv in relate_mv %}
-            {{ mv.mv_name }}
-          {% endfor %}
-        </p>
-      </div>
-      {% endfor %}
+      <ul class="accordion" data-accordion>
+        {% for actor in rst_actors %}
+          <li class="accordion-navigation">
+            <a href="#demo_{{ loop.index }}">{{ actor.act_name }}</a>
+            <div id="demo_{{ loop.index }}" class="content">
+              <div class="panel radius">
+                <p>演员编号: {{ actor.act_id }}</p>
+                <p>演员性别: {{ actor.gender }}</p>
+                <p>演员国籍: {{ actor.act_country }}</p>
+                <p>主要参演电影: {% for key, value in rst_mvs.items() %}
+                                  {% if key == actor.act_id %}
+                                    {{ value }}
+                                  {% endif %}
+                                {% endfor %}</p>
+              </div>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
     </div>
     {% endblock 搜索结果 %}
 
