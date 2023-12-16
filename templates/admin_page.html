@@ -9,6 +9,7 @@
     <ul class="button-group round">
         <li><button type="button" class="button" onclick="redirectToAnotherPage_1()">管理电影</button></li>
         <li><button type="button" class="button" onclick="redirectToAnotherPage_2()">管理演员</button></li>
+        <li><button type="button" class="button" onclick="redirectToAnotherPage_3()">管理评论</button></li>
     </ul>
 
     <script>
@@ -20,6 +21,11 @@
         function redirectToAnotherPage_2() 
         {
             window.location.href = '/admin_act_page'; //这里写装饰器函数的URL
+        }
+
+        function redirectToAnotherPage_3() 
+        {
+            window.location.href = '/admin_comment_page'; //这里写装饰器函数的URL
         }
     </script>
 </div>
@@ -49,6 +55,7 @@
       }
     </style>
 </head>
+
 <div style="padding:20px">
     <h3>非法访问，请您立刻返回！</h3>
     <ul class="button-group round">

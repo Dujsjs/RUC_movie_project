@@ -388,7 +388,11 @@
                     <p>网络评分: {{ movie.online_rate }}</p>
                     <p>评论数量: {{ movie.comments_num }}</p>
                     <p>影片时长: {{ movie.duration }}</p>
-                    <p>参演人员:</p>
+                    <p>主要参演人员:{% for key, value in rst_acts.items() %}
+                        {% if key == movie.mv_id %}
+                          {{ value }}
+                        {% endif %}
+                      {% endfor %}</p>
         
                     <div id="delete_{{ loop.index }}" class="reveal-modal medium" data-reveal>
                         <form class="mv_delete_Form" action="/admin_delete_mv" method="post">

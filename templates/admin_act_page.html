@@ -262,7 +262,11 @@
                 <p>演员编号: {{ actor.act_id }}</p>
                 <p>演员性别: {{ actor.gender }}</p>
                 <p>演员国籍: {{ actor.act_country }}</p>
-                <p>参演过的电影: </p>
+                <p>主要参演电影: {% for key, value in rst_mvs.items() %}
+                    {% if key == actor.act_id %}
+                      {{ value }}
+                    {% endif %}
+                  {% endfor %}</p>
                 </div>
             </div>
         </li>

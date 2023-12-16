@@ -1,0 +1,149 @@
+{% if current_user.is_authenticated %}
+{% if current_user.get_id() == "1" %}
+{% extends 'mainpage_base.html' %}
+
+{% block 图片展示 %}
+<style>
+    .image-limit 
+    {
+      max-width: 390px;
+      max-height: 260px;
+    }
+
+    .accordion-navigation 
+    {
+      border-bottom: 1px solid #ccc; /* 添加底部边框，可以根据需要调整颜色和宽度 */
+    }
+
+    .row_container 
+    {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+</style>
+
+<div style="padding:20px;">
+    <ul class="accordion" data-accordion>
+      {% for temp1 in mv_cmt %}
+        <li class="accordion-navigation">
+          <a href="#demo_mv_{{ loop.index }}">
+            <div class="row_container">
+              <h5>ID为{{ temp1.user_id }}的用户对电影{{ temp1.mv_name }}的评价</h5>
+              <ul class="button-group radius">
+                <button type="button" class="button round small" data-reveal-id="comment_mv_{{ loop.index }}">删除</button>
+              </ul>
+            </div>
+          </a>
+
+          <div id="demo_mv_{{ loop.index }}" class="content">
+            <div class="panel radius">
+              <p>电影编号: {{ temp1.mv_id }}</p>
+              <p>评价内容: {{ temp1.mv_comment }}</p>
+            </div>
+          </div>
+
+          <div id="comment_mv_{{ loop.index }}" class="reveal-modal medium" data-reveal>
+            <form class="comment_mv_Form" action="/delete_mv_comment" method="post">
+                <br>
+                <div data-alert class="alert-box warning">
+                    <strong>提示：</strong>请再次确认！
+                    <a href="#" class="close">&times;</a>
+                </div>
+
+                <label for="mv_id">电影ID：</label>
+                <input type="text" id="mv_id" name="mv_id" value="{{ temp1.mv_id }}" readonly><br>
+
+                <label for="user_id">用户ID：</label>
+                <input type="text" id="user_id" name="user_id" value="{{ temp1.user_id }}" readonly><br>
+
+                <label for="mv_comment">评价内容：</label>
+                <input type="text" id="mv_comment" name="mv_comment" value="{{ temp1.mv_comment }}" readonly><br>
+                <input class="button" type = "submit" name = "delete_comment_mv" value="删除">
+                <a class="close-reveal-modal">&times;</a>  <!--这是关闭窗口的按钮-->
+            </form>
+          </div>
+
+        </li>
+      {% endfor %}
+
+      {% for temp2 in act_cmt %}
+          <li class="accordion-navigation">
+            <a href="#demo_act_{{ loop.index }}">
+              <div class="row_container">
+                <h5>ID为{{ temp2.user_id }}的用户对演员{{ temp2.act_name }}的评价</h5>
+                <ul class="button-group radius">
+                  <button type="button" class="button round small" data-reveal-id="comment_act_{{ loop.index }}">删除</button>
+                </ul>
+              </div>
+            </a>
+  
+            <div id="demo_act_{{ loop.index }}" class="content">
+              <div class="panel radius">
+                <p>演员编号: {{ temp2.act_id }}</p>
+                <p>评价内容: {{ temp2.act_comment }}</p>
+              </div>
+            </div>
+  
+            <div id="comment_act_{{ loop.index }}" class="reveal-modal medium" data-reveal>
+              <form class="comment_act_Form" action="/delete_act_comment" method="post">
+                  <br>
+                  <div data-alert class="alert-box warning">
+                      <strong>提示：</strong>请再次确认！
+                      <a href="#" class="close">&times;</a>
+                  </div>
+  
+                  <label for="act_id">演员ID：</label>
+                  <input type="text" id="act_id" name="act_id" value="{{ temp2.act_id }}" readonly><br>
+  
+                  <label for="user_id">用户ID：</label>
+                  <input type="text" id="user_id" name="user_id" value="{{ temp2.user_id }}" readonly><br>
+  
+                  <label for="mv_comment">评价内容：</label>
+                  <input type="text" id="mv_comment" name="mv_comment" value="{{ temp2.act_comment }}" readonly><br>
+                  <input class="button" type = "submit" name = "delete_comment_act" value="删除">
+                  <a class="close-reveal-modal">&times;</a>  <!--这是关闭窗口的按钮-->
+              </form>
+            </div>
+  
+          </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock 图片展示 %}
+
+{% else %}
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>电影管理系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.3/css/normalize.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.3/css/foundation.min.css">
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/foundicons/3.0.0/foundation-icons.css' rel='stylesheet' type='text/css'>
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/foundation/5.5.3/js/foundation.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+
+    <style>
+      /* 使用 CSS 样式规则 */
+      .custom-image {
+        width: 690px;
+        height: 480px;
+      }
+    </style>
+</head>
+<div style="padding:20px">
+    <h3>非法访问，请您立刻返回！</h3>
+    <ul class="button-group round">
+        <li><button type="button" class="button" onclick="redirectToMainPage()">返回</button></li>
+    </ul>
+</div>
+
+<script>
+    function redirectToMainPage() 
+    {
+        window.location.href = '/'; //这里写装饰器函数的URL
+    }
+</script>
+{% endif %}
+{% endif %}

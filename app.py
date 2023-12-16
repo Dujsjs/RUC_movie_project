@@ -7,7 +7,7 @@ from flask import request, url_for, redirect, flash, jsonify
 # from wtforms.validators import DataRequired, Length
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine, func
+from sqlalchemy import create_engine, func, and_
 from sqlalchemy.orm import joinedload, sessionmaker
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user
@@ -80,14 +80,16 @@ class Mv_Act(movie_db.Model):
     mv_id = movie_db.Column(movie_db.Integer, nullable = False)
     
 class Mv_User(movie_db.Model):
-    mv_rate= movie_db.Column(movie_db.Float, nullable = False, primary_key=True)  #用户在系统中的评分
-    username = movie_db.Column(movie_db.String(10), nullable = False)
-    mv_id = movie_db.Column(movie_db.Integer, nullable = False)
+    mv_comment= movie_db.Column(movie_db.String(1000), nullable = False)  #用户评价
+    mv_name = movie_db.Column(movie_db.String(20), nullable = False)
+    user_id = movie_db.Column(movie_db.String(20), nullable = False, primary_key=True)
+    mv_id = movie_db.Column(movie_db.String(20), nullable = False, primary_key=True)
 
 class Act_User(movie_db.Model):
-    act_rate = movie_db.Column(movie_db.Float, nullable = False, primary_key=True) #用户在系统中的评分
-    username = movie_db.Column(movie_db.String(10), nullable = False)
-    act_id = movie_db.Column(movie_db.Integer, nullable = False)
+    act_comment = movie_db.Column(movie_db.String(1000), nullable = False,) #用户评价
+    act_name = movie_db.Column(movie_db.String(20), nullable = False)
+    user_id = movie_db.Column(movie_db.String(20), nullable = False, primary_key=True)
+    act_id = movie_db.Column(movie_db.String(20), nullable = False, primary_key=True)
 
 #以下为相关装饰器及其对应函数：
 @app.cli.command('drill_data')
@@ -341,13 +343,38 @@ def demo():
 @login_required #用于视图保护
 def demo_mv():
     rst = Movie_info.query.all()
-    return render_template('admin_mv_page.html', rst_movies = rst)
+
+    act_rst = {}
+    for mv_element in rst:
+        mv_id = mv_element.mv_id
+        act_que = movie_db.session.query(Actor_info.act_name).join(Mv_Act, Mv_Act.act_id == Actor_info.act_id).filter(Mv_Act.mv_id == mv_id).all()
+        act_list = [temp for temp in act_que]
+        unique_act_list = list(set(act_list))
+        act_rst[mv_id] = unique_act_list
+    
+    return render_template('admin_mv_page.html', rst_movies = rst, rst_acts = act_rst)
 
 @app.route('/admin_act_page', methods = ['GET'])
 @login_required #用于视图保护
 def demo_act():
     rst = Actor_info.query.all()
-    return render_template('admin_act_page.html', rst_actors = rst)
+
+    mv_rst = {}
+    for act_element in rst:
+        act_id = act_element.act_id
+        mv_que = movie_db.session.query(Movie_info.mv_name).join(Mv_Act, Mv_Act.mv_id == Movie_info.mv_id).filter(Mv_Act.act_id == act_id).all()
+        mv_list = [temp for temp in mv_que]
+        unique_mv_list = list(set(mv_list))
+        mv_rst[act_id] = unique_mv_list
+    
+    return render_template('admin_act_page.html', rst_actors = rst, rst_mvs = mv_rst)
+
+@app.route('/admin_comment_page', methods = ['GET'])
+@login_required #用于视图保护
+def comment_demo():
+    mv_cmt = Mv_User.query.all()
+    act_cmt = Act_User.query.all()
+    return render_template('admin_comment_page.html', mv_cmt = mv_cmt, act_cmt = act_cmt)
 
 @app.route('/admin_add_mv', methods = ['GET', 'POST'])
 @login_required #用于视图保护
@@ -564,3 +591,57 @@ def find_act():
         act_list = [(row[2], "(" + row[1] + ")") for row in act_rst]  #返回演员名称和身份
 
         return jsonify({'result': act_list})
+    
+@app.route('/user_comment_mv', methods = ['POST']) 
+def comment_mv():
+    if request.method == 'POST':
+        mv_id = request.form['mv_id']
+        user_id = request.form['user_id']
+        content = request.form['mv_comment']
+        mv_name = request.form['mv_name']
+
+        rst = Mv_User.query.filter(and_(Mv_User.mv_id == mv_id, Mv_User.user_id == user_id)).first()
+
+        if rst is not None:
+            rst.mv_comment = content
+            movie_db.session.commit()
+        else:
+            temp_mv_user = Mv_User(user_id = user_id, mv_id = mv_id, mv_comment = content, mv_name = mv_name)
+            movie_db.session.add(temp_mv_user)
+            movie_db.session.commit()
+        return redirect(url_for('index'))
+
+@app.route('/user_comment_act', methods = ['POST'])
+def comment_act():
+    if request.method == 'POST':
+        act_id = request.form['act_id']
+        user_id = request.form['user_id']
+        content = request.form['act_comment']
+        act_name = request.form['act_name']
+
+        rst = Act_User.query.filter(and_(Act_User.act_id == act_id, Act_User.user_id == user_id)).first()
+
+        if rst is not None:
+            rst.act_comment = content
+            movie_db.session.commit()
+        else:
+            temp_act_user = Act_User(user_id = user_id, act_id = act_id, act_comment = content, act_name = act_name)
+            movie_db.session.add(temp_act_user)
+            movie_db.session.commit()
+        return redirect(url_for('index'))
+    
+@app.route('/delete_mv_comment', methods = ['POST'])
+def delete_mv_comment():
+    mv_id = request.form['mv_id']
+    user_id = request.form['user_id']
+    Mv_User.query.filter(and_(Mv_User.mv_id == mv_id, Mv_User.user_id == user_id)).delete()
+    movie_db.session.commit()
+    return redirect(url_for('comment_demo'))
+
+@app.route('/delete_act_comment', methods = ['POST'])
+def delete_act_comment():
+    act_id = request.form['act_id']
+    user_id = request.form['user_id']
+    Act_User.query.filter(and_(Act_User.act_id == act_id, Act_User.user_id == user_id)).delete()
+    movie_db.session.commit()
+    return redirect(url_for('comment_demo'))

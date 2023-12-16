@@ -15,6 +15,13 @@
           {
             border-bottom: 1px solid #ccc; /* 添加底部边框，可以根据需要调整颜色和宽度 */
           }
+
+          .row_container 
+          {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+          }
       </style>
     </head>
 
@@ -34,7 +41,16 @@
       <ul class="accordion" data-accordion>
         {% for actor in rst_actors %}
           <li class="accordion-navigation">
-            <a href="#demo_{{ loop.index }}">{{ actor.act_name }}</a>
+            <a href="#demo_{{ loop.index }}">
+              <div class="row_container">
+                <h5>{{ actor.act_name }}</h5>
+                {% if current_user.is_authenticated %}
+                <ul class="button-group radius">
+                    <button type="button" class="button round small" data-reveal-id="comment_act_{{ loop.index }}">发表评论</button>
+                </ul>
+                {% endif %}
+            </div>
+            </a>
             <div id="demo_{{ loop.index }}" class="content">
               <div class="panel radius">
                 <p>演员编号: {{ actor.act_id }}</p>
@@ -47,6 +63,31 @@
                                 {% endfor %}</p>
               </div>
             </div>
+
+            <div id="comment_act_{{ loop.index }}" class="reveal-modal medium" data-reveal>
+              <form class="comment_act_Form" action="/user_comment_act" method="post">
+                  <br>
+                  <div data-alert class="alert-box warning">
+                      <strong>提示：</strong>请文明评价，谢谢！
+                      <a href="#" class="close">&times;</a>
+                  </div>
+
+                  <label for="act_id">要评价的演员ID：</label>
+                  <input type="text" id="act_id" name="act_id" value="{{ actor.act_id }}" readonly><br>
+
+                  <label for="act_name">要评价的演员名称：</label>
+                  <input type="text" id="act_name" name="act_name" value="{{ actor.act_name }}" readonly><br>
+
+                  <label for="user_id">用户ID：</label>
+                  <input type="text" id="user_id" name="user_id" value="{{ current_user.get_id() }}" readonly><br>
+
+                  <label for="act_comment">评价内容：</label>
+                  <input type="text" id="act_comment" name="act_comment" required><br>
+                  <input class="button" type = "submit" name = "comment_act" value="提交评论">
+                  <a class="close-reveal-modal">&times;</a>  <!--这是关闭窗口的按钮-->
+              </form>
+            </div>
+          
           </li>
         {% endfor %}
       </ul>

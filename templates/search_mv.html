@@ -13,6 +13,13 @@
           {
             border-bottom: 1px solid #ccc; /* 添加底部边框，可以根据需要调整颜色和宽度 */
           }
+
+          .row_container 
+          {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+          }
       </style>
     </head>
     <script src="https://cdn.staticfile.org/foundation/5.5.3/js/vendor/modernizr.js"></script>
@@ -156,7 +163,16 @@
       <ul class="accordion" data-accordion>
         {% for movie in rst_movies %}
           <li class="accordion-navigation">
-            <a href="#demo_{{ loop.index }}">{{ movie.mv_name }}</a>
+            <a href="#demo_{{ loop.index }}">
+              <div class="row_container">
+                <h5>{{ movie.mv_name }}</h5>
+                {% if current_user.is_authenticated %}
+                <ul class="button-group radius">
+                    <button type="button" class="button round small" data-reveal-id="comment_mv_{{ loop.index }}">发表评论</button>
+                </ul>
+                {% endif %}
+            </div>
+            </a>
             <div id="demo_{{ loop.index }}" class="content">
               <div class="panel radius">
                 <p>电影编号: {{ movie.mv_id }}</p>
@@ -174,6 +190,31 @@
                             {% endfor %}</p>
               </div>
             </div>
+
+            <div id="comment_mv_{{ loop.index }}" class="reveal-modal medium" data-reveal>
+              <form class="comment_mv_Form" action="/user_comment_mv" method="post">
+                  <br>
+                  <div data-alert class="alert-box warning">
+                      <strong>提示：</strong>请文明评价，谢谢！
+                      <a href="#" class="close">&times;</a>
+                  </div>
+
+                  <label for="mv_id">要评价的电影ID：</label>
+                  <input type="text" id="mv_id" name="mv_id" value="{{ movie.mv_id }}" readonly><br>
+
+                  <label for="mv_name">要评价的电影名称：</label>
+                  <input type="text" id="mv_name" name="mv_name" value="{{ movie.mv_name }}" readonly><br>
+
+                  <label for="user_id">用户ID：</label>
+                  <input type="text" id="user_id" name="user_id" value="{{ current_user.get_id() }}" readonly><br>
+
+                  <label for="mv_comment">评价内容：</label>
+                  <input type="text" id="mv_comment" name="mv_comment" required><br>
+                  <input class="button" type = "submit" name = "comment_mv" value="提交评论">
+                  <a class="close-reveal-modal">&times;</a>  <!--这是关闭窗口的按钮-->
+              </form>
+            </div>
+
           </li>
         {% endfor %}
       </ul>
