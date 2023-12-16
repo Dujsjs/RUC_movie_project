@@ -203,7 +203,7 @@
         }
 
         //如果所有字段都非空再提交
-        fetch('/admin', {
+        fetch('/admin_add_act', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -216,6 +216,11 @@
         })
         .catch(error => {
             console.error('Error:', error);
+        })
+        .then(data => {
+            // 处理成功响应
+            alert('添加成功！');
+            location.reload();  // 刷新页面
         });
     }
 
@@ -354,5 +359,6 @@
         window.location.href = '/'; //这里写装饰器函数的URL
     }
 </script>
+
 {% endif %}
 {% endif %}

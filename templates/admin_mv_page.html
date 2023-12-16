@@ -337,6 +337,11 @@
         })
         .catch(error => {
             console.error('Error:', error);
+        })
+        .then(data => {
+            // 处理成功响应
+            alert('添加成功！');
+            location.reload();  // 刷新页面
         });
     }
 

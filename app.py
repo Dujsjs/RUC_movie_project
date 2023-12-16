@@ -2,9 +2,6 @@
 
 from flask import Flask, render_template
 from flask import request, url_for, redirect, flash, jsonify
-# from flask_wtf import FlaskForm
-# from wtforms import StringField, FloatField, DateField, SelectField, TextAreaField, SubmitField
-# from wtforms.validators import DataRequired, Length
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine, func, and_
@@ -399,10 +396,9 @@ def add_mv():
             temp_act_mv_relation = Mv_Act(id = str(id_max + 1), relation_type = new_data[form_name]['act_relation'], act_id = act_id_max + 1, mv_id = mv_id_max + 1) #更新关系表信息
             movie_db.session.add(temp_act_info)
             movie_db.session.add(temp_act_mv_relation)
-
         movie_db.session.commit() #最终全部提交
-        search_rst = Movie_info.query.all() #提交了表单，首先保证仍然显示所有电影信息
-        return render_template('admin_mv_page.html', rst_movies = search_rst)
+
+    return redirect(url_for('demo_mv'))
 
 @app.route('/admin_modify_mv', methods = ['GET', 'POST'])
 @login_required #用于视图保护
@@ -419,8 +415,7 @@ def modify_mv():
         rst.duration = request.form['duration']
         movie_db.session.commit()
 
-        all_rst = Movie_info.query.all()
-        return render_template('admin_mv_page.html', rst_movies = all_rst)
+    return redirect(url_for('demo_mv'))
 
 @app.route('/admin_delete_mv', methods = ['GET', 'POST'])
 @login_required #用于视图保护
@@ -431,8 +426,7 @@ def delete_mv():
         Mv_Act.query.filter(Mv_Act.mv_id == request.form['mv_id']).delete() #注意，这里只删除关系信息，而不删除演员信息，要想删除演员信息，可单独删除演员
         movie_db.session.commit()
 
-        all_rst = Movie_info.query.all()
-        return render_template('admin_mv_page.html', rst_movies = all_rst)
+    return redirect(url_for('demo_mv'))
     
 @app.route('/admin_add_act', methods = ['GET', 'POST'])
 @login_required #用于视图保护
@@ -445,10 +439,9 @@ def add_act():
             act_id_max = movie_db.session.query(func.max(Actor_info.act_id)).scalar()
             temp_act_info = Actor_info(act_id = act_id_max + 1, act_name = new_data[form_name]['act_name'], gender = new_data[form_name]['gender'], act_country = new_data[form_name]['country']) #更新演员表信息
             movie_db.session.add(temp_act_info)
-
         movie_db.session.commit() #最终全部提交
-        search_rst = Actor_info.query.all() #提交了表单，首先保证仍然显示所有电影信息
-        return render_template('admin_act_page.html', rst_actors = search_rst)
+
+    return redirect(url_for('demo_act'))
 
 @app.route('/admin_modify_act', methods = ['GET', 'POST'])
 @login_required #用于视图保护
@@ -460,8 +453,7 @@ def modify_act():
         rst.act_country  = request.form['act_country']
         movie_db.session.commit()
 
-        all_rst = Actor_info.query.all()
-        return render_template('admin_act_page.html', rst_actors = all_rst)
+    return redirect(url_for('demo_act'))
 
 @app.route('/admin_delete_act', methods = ['GET', 'POST'])
 @login_required #用于视图保护
@@ -471,8 +463,7 @@ def delete_act():
         movie_db.session.delete(act)
         movie_db.session.commit()
 
-        all_rst = Actor_info.query.all()
-        return render_template('admin_act_page.html', rst_actors = all_rst)
+    return redirect(url_for('demo_act'))
     
 @app.route('/box_predict', methods = ['GET', 'POST'])
 def predict():
@@ -498,6 +489,15 @@ def predict():
     model = LinearRegression()
     model.fit(x_train, y_train)
     prediction = model.predict([[duration, comments_num, prize_num, online_rate]])
+
+    rst = Movie_info.query.all() #获得演员列表
+    act_rst = {}
+    for mv_element in rst:
+        mv_id = mv_element.mv_id
+        act_que = movie_db.session.query(Actor_info.act_name).join(Mv_Act, Mv_Act.act_id == Actor_info.act_id).filter(Mv_Act.mv_id == mv_id).all()
+        act_list = [temp for temp in act_que]
+        unique_act_list = list(set(act_list))
+        act_rst[mv_id] = unique_act_list
     
     plt.clf() #清除先前已经绘画过的图像
     plt.scatter(range(len(y_train)), y_train, color='blue', label='historical_box')
@@ -537,7 +537,7 @@ def predict():
         radar_data_sets.append(temp_dic)
     radar_data = {'labels': radar_labels, 'datasets': radar_data_sets}
 
-    return render_template('search_mv.html', rst_movies = search_rst, mv_line_data = line_data, mv_doughnut_data = doughnut_data, mv_radar_data = radar_data, prediction=prediction[0], img_url=img_url)
+    return render_template('search_mv.html', rst_movies = search_rst, mv_line_data = line_data, mv_doughnut_data = doughnut_data, mv_radar_data = radar_data, prediction=prediction[0], img_url=img_url, rst_acts = act_rst)
 
 @login_manager.user_loader
 def load_user(user_id):
