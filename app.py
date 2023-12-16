@@ -328,10 +328,15 @@ def index():
             return render_template('search_act.html', rst_actors = search_rst, rst_mvs = mv_rst)
         
         else:
-            return redirect(url_for('/')) #收到不知名表单，则跳转回主页
-        
+            return redirect(url_for('index')) #收到不知名表单，则跳转回主页
+       
     else: #若未填写表单并发出搜索请求，则直接显示电影展示界面
-        return render_template('mainpage_base.html')
+        temp_1 = Mv_User.query.all()
+        temp_2 = Act_User.query.all()
+        comments = ["用户" + i.user_id + "对电影" + i.mv_name + "的评论：" + i.mv_comment for i in temp_1] + ["用户" + j.user_id + "对演员" + j.act_name + "的评论：" + j.act_comment for j in temp_2]
+        content = '、'.join(comments)
+
+        return render_template('mainpage_base.html', subtitles = content)
 
 @app.route('/admin', methods = ['GET', 'POST']) #编辑信息装饰器
 @login_required #用于视图保护
@@ -554,23 +559,23 @@ def login():
                     return render_template('admin_page.html')
                 else: #其他用户登录
                     login_user(user)
-                    return render_template('mainpage_base.html')
+                    return redirect(url_for('index'))
             else:
-                return render_template('mainpage_base.html')
+                return redirect(url_for('index'))
         else:
             user = User_info(user_id = user_id, username = username)  #用户名默认为id
             user.set_password(password_hash)
             movie_db.session.add(user)
             movie_db.session.commit()
             login_user(user)
-            return render_template('mainpage_base.html')
-    return render_template('mainpage_base.html')
+            return redirect(url_for('index'))
+    return redirect(url_for('index'))
         
 @app.route('/logout', methods = ['POST'])
 @login_required #用于视图保护
 def logout():
     logout_user() # 登出用户
-    return render_template('mainpage_base.html') #此语句返回给AJAX，故不会生效
+    return redirect(url_for('index')) #此语句返回给AJAX，故不会生效
 
 @app.route('/id_check', methods = ['POST'])
 def id_check():
@@ -645,3 +650,46 @@ def delete_act_comment():
     Act_User.query.filter(and_(Act_User.act_id == act_id, Act_User.user_id == user_id)).delete()
     movie_db.session.commit()
     return redirect(url_for('comment_demo'))
+
+@app.route('/data', methods = ['GET', 'POST'])
+def data():
+    temp_query = Movie_info.query
+    search_rst = temp_query.all()
+       
+    act_rst = {}
+    for mv_element in search_rst:
+        mv_id = mv_element.mv_id
+        act_que = movie_db.session.query(Actor_info.act_name).join(Mv_Act, Mv_Act.act_id == Actor_info.act_id).filter(Mv_Act.mv_id == mv_id).all()
+        act_list = [temp for temp in act_que]
+        unique_act_list = list(set(act_list))
+        act_rst[mv_id] = unique_act_list
+
+    engine = create_engine('sqlite:///data.db') #链接数据库引擎
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    df_search_rst = pd.read_sql(temp_query.statement, session.bind) #将查询结果转化为数据框
+
+    mv_name_list = df_search_rst['mv_name'].to_list()
+    mv_box_list = list(map(float, df_search_rst['mv_box'].to_list()))
+    line_data = {'labels': mv_name_list, 'data': mv_box_list}
+
+    type_box = df_search_rst.groupby('mv_type')['mv_box'].sum()
+    mv_type_list = type_box.index.tolist()
+    mv_type_box_list = type_box.values.tolist()
+    doughnut_data = {'labels': mv_type_list, 'data': mv_type_box_list}
+
+    radar_labels = ['电影票房排名', '网络评分排名', '获奖数量排名', '评论数量排名', '影片时长排名']
+    df_search_rst_ranked = df_search_rst
+    columns_to_rank = ['mv_box', 'online_rate', 'prize_num', 'comments_num', 'duration']
+    for col in columns_to_rank: # 对每列进行排名并将排名存储到新的列
+        rank_col = f'{col}_Rank'
+        df_search_rst_ranked[rank_col] =  df_search_rst_ranked[col].rank(ascending=False)
+
+    radar_data_sets = []
+    for index, row in df_search_rst_ranked.iterrows(): #按行循环
+        temp_list = [row['mv_box_Rank'], row['online_rate_Rank'], row['prize_num_Rank'], row['comments_num_Rank'], row['duration_Rank']]
+        temp_dic = {'label': row['mv_name'], 'data': temp_list}
+        radar_data_sets.append(temp_dic)
+    radar_data = {'labels': radar_labels, 'datasets': radar_data_sets}
+
+    return render_template('search_mv.html', rst_movies = search_rst, rst_acts = act_rst, mv_line_data = line_data, mv_doughnut_data = doughnut_data, mv_radar_data = radar_data)

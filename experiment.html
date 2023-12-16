@@ -1,90 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- 引入 Foundation 5 的 CSS 文件 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.3/css/foundation.min.css">
-    <style>
-        /* 自定义样式，调整按钮样式 */
-        .custom-buttons-container {
-            position: absolute;
-            top: 50%;
-            right: 10px; /* 调整按钮到右侧的距离，根据需要调整位置 */
-            transform: translateY(-50%);
-            z-index: 1; /* 设置 z-index，确保按钮容器位于手风琴项上方 */
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>字幕滚动</title>
 
-        .custom-buttons-container button {
-            margin-bottom: 10px; /* 调整按钮之间的间距，根据需要调整大小 */
-            display: block;
-        }
-    </style>
-    <title>Foundation 5 Accordion with Buttons</title>
+  <style>
+    /* 设置字幕容器的样式 */
+    .subtitle-container {
+      white-space: nowrap; /* 禁止字幕换行 */
+      overflow: hidden; /* 隐藏溢出的内容 */
+      position: relative;
+      border: 1px solid #ccc;
+    }
+
+    /* 设置字幕文本的样式 */
+    .subtitle-text {
+      display: inline-block; /* 内联块级元素，使字幕水平排列 */
+      animation: scrollText 10s linear infinite; /* 设置滚动动画 */
+    }
+
+    /* 定义滚动动画 */
+    @keyframes scrollText {
+      from {
+        transform: translateX(100%); /* 初始位置在容器的最右边 */
+      }
+      to {
+        transform: translateX(-100%); /* 结束位置在容器的最左边 */
+      }
+    }
+  </style>
 </head>
 <body>
 
-    <div class="row">
-        <div class="large-12 columns">
-            <dl class="accordion" data-accordion>
-                <!-- 手风琴项 1 -->
-                <dd class="accordion-navigation">
-                    <a href="#panel1">Item 1</a>
-                    <div class="content">
-                        <p>Content for item 1.</p>
-                        <!-- 在手风琴项内部添加按钮容器 -->
-                        <div class="custom-buttons-container">
-                            <button onclick="handleButton1()">Button 1</button>
-                            <button onclick="handleButton2()">Button 2</button>
-                        </div>
-                    </div>
-                </dd>
-
-                <!-- 手风琴项 2 -->
-                <dd class="accordion-navigation">
-                    <a href="#panel2">Item 2</a>
-                    <div class="content">
-                        <p>Content for item 2.</p>
-                        <!-- 在手风琴项内部添加按钮容器 -->
-                        <div class="custom-buttons-container">
-                            <button onclick="handleButton1()">Button 1</button>
-                            <button onclick="handleButton2()">Button 2</button>
-                        </div>
-                    </div>
-                </dd>
-
-                <!-- 手风琴项 3 -->
-                <dd class="accordion-navigation">
-                    <a href="#panel3">Item 3</a>
-                    <div class="content">
-                        <p>Content for item 3.</p>
-                        <!-- 在手风琴项内部添加按钮容器 -->
-                        <div class="custom-buttons-container">
-                            <button onclick="handleButton1()">Button 1</button>
-                            <button onclick="handleButton2()">Button 2</button>
-                        </div>
-                    </div>
-                </dd>
-            </dl>
-        </div>
+  <!-- 字幕容器 -->
+  <div class="subtitle-container">
+    <!-- 字幕文本 -->
+    <div class="subtitle-text">
+      <p>这是滚动的字幕文本。这是滚动的字幕文本。</p>
     </div>
-
-    <!-- 引入 jQuery 和 Foundation 5 的 JavaScript 文件 -->
-    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.3/js/foundation.min.js"></script>
-    <!-- 初始化 Foundation -->
-    <script>
-        $(document).foundation();
-
-        // 你可以在这里添加按钮点击事件的处理函数
-        function handleButton1() {
-            alert("Button 1 clicked");
-        }
-
-        function handleButton2() {
-            alert("Button 2 clicked");
-        }
-    </script>
+  </div>
 
 </body>
 </html>

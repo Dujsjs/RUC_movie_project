@@ -7,6 +7,7 @@
     <title>电影管理系统</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.3/css/normalize.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/5.5.3/css/foundation.min.css">
+    <link rel="stylesheet" type="text/css" href="../static/style.css">
     <link href='https://cdnjs.cloudflare.com/ajax/libs/foundicons/3.0.0/foundation-icons.css' rel='stylesheet' type='text/css'>
     <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://cdn.staticfile.org/foundation/5.5.3/js/foundation.min.js"></script>
@@ -17,6 +18,30 @@
       .custom-image {
         width: 690px;
         height: 480px;
+      }
+
+      /* 设置字幕容器的样式 */
+      .subtitle-container {
+        white-space: nowrap; /* 禁止字幕换行 */
+        overflow: hidden; /* 隐藏溢出的内容 */
+        position: relative;
+        border: 1px solid #ccc;
+      }
+
+      /* 设置字幕文本的样式 */
+      .subtitle-text {
+        display: inline-block; /* 内联块级元素，使字幕水平排列 */
+        animation: scrollText 20s cubic-bezier(0, 0, 1, 1) infinite;
+      }
+
+      /* 定义滚动动画 */
+      @keyframes scrollText {
+        from {
+          transform: translateX(100%); /* 初始位置在容器的最右边 */
+        }
+        to {
+          transform: translateX(-100%); /* 结束位置在容器的最左边 */
+        }
       }
     </style>
   </head>
@@ -43,7 +68,7 @@
             <li class="divider"></li> <!--纵向分隔线-->
             <li><a href="#" onclick="redirectToMainPage()">主页</a></li>
             <li class="divider"></li><!--纵向分隔线-->
-            <li><a href="#">数据分析面板</a></li>
+            <li><a href="#" onclick="redirectToData()">数据分析面板</a></li>
             <li class="divider"></li><!--纵向分隔线-->        
             {% if current_user.is_authenticated %}
               {% if current_user.get_id() == "1" %}
@@ -210,15 +235,53 @@
     </div>
 
     {% block 图片展示 %}
-    <!--电影海报滚动展示-->
-    <div class="row">
-        <div id="featured" data-orbit>
-          <img class="custom-image" src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fsafe-img.xhscdn.com%2Fbw1%2F18c5b504-c581-4d8d-80d7-fe267f65a742%3FimageView2%2F2%2Fw%2F1080%2Fformat%2Fjpg&refer=http%3A%2F%2Fsafe-img.xhscdn.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1704107046&t=6a45e4abd3f4ebea7579faa960f02d6f" alt="slide image" width="200" height="100">
-          <img class="custom-image" src="https://img0.baidu.com/it/u=2550135102,354133781&fm=253&fmt=auto&app=138&f=JPEG?w=750&h=500" alt="slide image">
-          <img class="custom-image" src="https://n.sinaimg.cn/sinacn09/200/w1080h720/20180704/f539-hevauxk0423577.jpg" alt="slide image">
+    <div class="home" fixed>
+      <div class="banner">
+        <div class="mask"></div>
+        <div class="bg">
+          <div  class="bg1" style="background-image:url(../static/banner.webp);">
+          </div>
+          <div  class="bg2" style="background-image:url(../static/banner.webp);">
+          </div>
         </div>
+
+        {% if current_user.is_authenticated %}
+        <div class="box">
+          <div class="install">
+            <h1>热门评论</h1>
+            <p>您可点击搜索进行查询，并发表评论！</p>
+
+            <div class="subtitle-container">
+              <div class="subtitle-text">
+                <p>{{ subtitles }}</p>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+        {% else %}
+        <div class="box">
+          <div class="install">
+            <h1>管理您的电影！</h1>
+            <p>提供快捷的电影查询、录入与互动功能</p>
+            <div class="info">
+              <span >1&nbsp; 模糊查询</span>
+              <span >2&nbsp; 数据分析</span>
+              <span >3&nbsp; 多用户</span>
+              <span >4&nbsp; 评论互动</span>
+              <span >5&nbsp; 快捷管理</span>
+            </div>
+            <button class="btn-home" data-reveal-id="login">
+              <span>快来登录吧
+                <div class="line"></div>
+              </span>
+            </button>
+          </div>
+        </div>
+        {% endif %}
+      </div>
     </div>
-    <!--电影海报滚动展示结束-->
+
     {% endblock 图片展示 %}
 
     {% block 搜索结果 %}{% endblock 搜索结果 %}
@@ -232,14 +295,21 @@
     <script>
       function redirectToMainPage() 
       {
-          window.location.href = '/'; //这里写装饰器函数的URL
+        window.location.href = '/'; //这里写装饰器函数的URL
       }
     </script>
 
     <script>
       function redirectToAdmin()
       {
-          window.location.href = '/admin'; //这里写装饰器函数的URL
+        window.location.href = '/admin'; //这里写装饰器函数的URL
+      }
+    </script>
+
+    <script>
+      function redirectToData()
+      {
+        window.location.href = '/data';
       }
     </script>
 
